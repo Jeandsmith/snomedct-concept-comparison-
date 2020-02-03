@@ -1,0 +1,32 @@
+$font-stack: Helvetica,
+sans-serif;
+$primary-color: #333;
+
+body {
+  font: 100% $font-stack;
+  color: $primary-color;
+  //   background: firebrick;
+  height: 100%;
+}
+
+table tbody,
+table thead {
+  display: block;
+}
+
+table tbody {
+  overflow: auto;
+  height: 300px;
+}
+
+table th:nth-child(1),
+td:nth-child(1) {
+  min-width: 400px;
+  max-width: 400px;
+}
+
+table th:nth-child(2),
+td:nth-child(2) {
+  min-width: 600px;
+  max-width: 600px;
+}
