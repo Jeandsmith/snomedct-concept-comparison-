@@ -1,0 +1,16 @@
+{
+  "name": "snomedct-concept-comparison",
+  "version": "1.0.0",
+  "description": "Medical Informatics",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James S. Abreu",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "postgres": "^1.0.2"
+  }
+}
