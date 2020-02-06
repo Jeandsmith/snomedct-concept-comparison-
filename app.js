@@ -14,5 +14,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log('Listening: http://localhost:5000/');
+    console.log('Listening: http://localhost:/', port);
 });
