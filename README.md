@@ -15,3 +15,4 @@ Resource    |   Short Desc
 [Python](https://docs.python.org/3/)    | Python documentation
 [Postgres SQL](https://www.postgresql.org/docs/12/index.html)   | The best open source DBMS...Period
 [gensim](https://radimrehurek.com/gensim/auto_examples/index.html)  | Python text embedding package.
+[SNOMEDCT](https://confluence.ihtsdotools.org/display/DOCRELFMT/4.1+Associations+Between+Release+Files) |   Snomed CT Specs
