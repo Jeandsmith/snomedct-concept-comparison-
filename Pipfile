@@ -14,7 +14,7 @@ nltk = "*"
 gensim = "*"
 numpy = "*"
 psycopg2 = "*"
-numbpy = "==1.17.0"
+flask-script = "*"
 
 [requires]
 python_version = "3.8"

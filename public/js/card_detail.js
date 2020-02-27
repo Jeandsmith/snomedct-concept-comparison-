@@ -1,5 +1,17 @@
 (function () {
-    $("table tbody tr td a").on("click", function () {
+    $("div.collection a").on("click", function () {
+        // Request score generation
+        // $.ajax({
+        //     url: "/gen_similarity_score",
+        //     data: {
+        //         thisTerm: "Some data",
+        //         otherTerm: "Some other data"  
+        //     },
+        //     success: (data) => {
+        //         console.log(data)
+        //     }
+        // })
+        
         if ($(this).data('clicked')) {
             // Erase this card
             var cardID = $(this).attr("id");
@@ -16,7 +28,7 @@
             // Open detail card 
             htmlTag = [
                 "<div class=\"col s12 m6\" id=\"", $(this).attr('id'), "\">",
-                    "<div class=\"card blue-grey darken-1\">",
+                    "<div class=\"card blue-grey darken-1 hoverable\">",
                         "<div class=\"card-content white-text\">",
                         "<span class=\"card-title\"> ", $(this).attr('id'), "</span>",
                         "<div class=\"divider\"></div>",
