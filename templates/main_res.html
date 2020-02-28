@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+{% for term in terms: %}
+
+<a href="#" class="collection-item concept" id="{{ term }}" truncate>
+
+    <p>
+
+        {{ term.text }}<br>
+        Similarity Score: {{ term.similarity_score }}
+
+    </p>
+</a>
+
+{% endfor %}
+
+{% endblock %}
