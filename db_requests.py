@@ -1,24 +1,9 @@
 import psycopg2 as pg
 from gensim.models import KeyedVectors as kv
+# import time
 
 connection = pg.connect("dbname=snomed user=postgres password=root")
 cursor = connection.cursor()
-
-model = kv.load_word2vec_format(
-    '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
-# print(len(model.wv.vocab))
-
-
-def cal_sim(terms, searched_term):
-    ts = searched_term.lower().split(' ')
-    scores = list()
-
-    for term in terms:
-        t = term.lower().split(' ')
-        scores.append(model.wv.n_similarity(ts, t))
-
-    terms_and_scores = {'terms': terms, 'scores': scores}
-    return terms_and_scores
 
 # Get the result of a query
 def get_terms(q):
@@ -27,26 +12,36 @@ def get_terms(q):
     if not q:
         return []
 
-    t = "".join(["%", q, "%"])
+    t = ''
+    if ' ' in q and not q.endswith((' ')):
+        t = q.replace(' ', ' & ')
+    else:
+        t = q
 
+    print(t)
+
+#   Postgresql handles indexing and queries
     query = '''
-        select term
-        from description
-        where active = '1' 
-        and typeid like '%%3009%%' 
-        and term like %(search)s
+        SELECT distinct sct_terms, sctid 
+        FROM sct_data_search
+        WHERE searchable_index @@ to_tsquery(%(search)s)
+        order by sct_terms desc
         limit 10;
     '''
+
     cursor.execute(query, {'search': t})
     ans = cursor.fetchall()
-    results = list()
+    results = []
 
 # Unpack the tupples
     for tup in ans:
-        (unt,) = tup
-        results.append(unt)
+        (sct_term, sctid,) = tup
+        # sim_score
 
-    rw = cal_sim(results, q)
+        results.append({
+            'sctid': sctid,
+            'sct_term': sct_term,
+            'similarity': 5
+        })
 
-    # print(results)
-    return rw
+    return results

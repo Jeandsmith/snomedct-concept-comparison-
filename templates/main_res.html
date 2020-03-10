@@ -1,19 +1,14 @@
 {% extends "template.html" %}
 
 {% block content %}
-
-{% for term in terms: %}
-
-<a href="#" class="collection-item concept" id="{{ term }}" truncate>
-
-    <p>
-
-        {{ term.text }}<br>
-        Similarity Score: {{ term.similarity_score }}
-
+{% for result in results: %}
+<a href="#!" class="collection-item" id="{{ term }}" truncate>
+    <p class="content">
+        <span class="term">{{ result.s_term }}</span> <br>
+        <span class="similarity">Similarity Score: {{ result.similarity }}</span>
     </p>
 </a>
-
 {% endfor %}
-
 {% endblock %}
+
+<!-- Assign side panels here -->
