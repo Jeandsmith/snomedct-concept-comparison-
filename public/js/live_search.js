@@ -40,7 +40,7 @@ $(() => {
           var html = [
             '<a href="#!" class="collection-item" truncate>',
               '<p class="content">',
-                '<span class="term">', term.sct_term, '</span> <br>',
+                '<span class="term">', term.term, '</span> <br>',
                 '<span class="similarity"> Similarity Score:', term.similarity , "</span></p>",
             "</a>"
           ];

@@ -6,6 +6,8 @@ connection = pg.connect("dbname=snomed user=postgres password=root")
 cursor = connection.cursor()
 
 # Get the result of a query
+
+
 def get_terms(q):
 
     # If the input is empty
@@ -22,11 +24,9 @@ def get_terms(q):
 
 #   Postgresql handles indexing and queries
     query = '''
-        SELECT distinct sct_terms, sctid 
-        FROM sct_data_search
-        WHERE searchable_index @@ to_tsquery(%(search)s)
-        order by sct_terms desc
-        limit 10;
+        SELECT distinct term, conceptId
+        FROM description, to_tsquery(%(search)s) as query 
+        WHERE term_idx @@ query;
     '''
 
     cursor.execute(query, {'search': t})
@@ -35,13 +35,13 @@ def get_terms(q):
 
 # Unpack the tupples
     for tup in ans:
-        (sct_term, sctid,) = tup
+        (term, concept_id,) = tup
         # sim_score
 
         results.append({
-            'sctid': sctid,
-            'sct_term': sct_term,
-            'similarity': 5
+            'term': term,
+            'concepId': concept_id,
+            'similarity': 0
         })
 
     return results
