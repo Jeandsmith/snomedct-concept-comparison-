@@ -2,23 +2,28 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import itertools as it
 import db_requests as dbreq
 from time import sleep
-# from gensim import Ke
-# import threading
+from flask_script import Server, Manager
+import gens
+
+# Custom server to load data at server startup
+class MyServer(Server):
+    def __call__(self, app, *args, **kargs):
+
+        # Load the w2v model
+        gens.load_models()
+
+        return Server.__call__(self, app, *args, **kargs)
 
 app = Flask(__name__, static_folder='public/')
-
-# @app.before_first_request
-# def load_word_2_vec():
-#     model = kv.load_word2vec_format(
-#         '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
-#     print(len(model.wv.vocab))
+manager = Manager(app)
+manager.add_command('runserver', MyServer)
 
 # Handle home page
 @app.route('/')
 def home():
     return render_template('main.html')
 
-
+# Handles user requests 
 @app.route('/term-search', methods=["GET", "POST"])
 def term_search():
     # Handle post request
@@ -29,3 +34,5 @@ def term_search():
 
 # cursor.close()
 # connection.close()
+if __name__ == "__main__":
+    manager.run()

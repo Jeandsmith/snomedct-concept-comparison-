@@ -1,5 +1,4 @@
 import psycopg2 as pg
-from gensim.models import KeyedVectors as kv
 # import time
 
 connection = pg.connect("dbname=snomed user=postgres password=root")
