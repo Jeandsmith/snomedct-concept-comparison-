@@ -2,16 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import itertools as it
 import db_requests as dbreq
 from time import sleep
+from flask_script import Server, Manager
 # from gensim import Ke
 # import threading
 
-app = Flask(__name__, static_folder='public/')
+def load_models():
+    model = kv.load_word2vec_format(
+        '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
+    print(len(model.wv.vocab))
 
-# @app.before_first_request
-# def load_word_2_vec():
-#     model = kv.load_word2vec_format(
-#         '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
-#     print(len(model.wv.vocab))
+# Custom server to load data at server startup
+class MyServer(Server):
+    def __call__(self, app, *args, **kargs):
+        load_models()
+        return Server.__call__(self, app, *args, **kargs)
+
+app = Flask(__name__, static_folder='public/')
 
 # Handle home page
 @app.route('/')
