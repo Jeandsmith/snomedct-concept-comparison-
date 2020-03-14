@@ -1,7 +1,7 @@
 import psycopg2 as pg
 # import time
 
-connection = pg.connect("dbname=snomed user=postgres password=root")
+connection = pg.connect("dbname=snomed user=james password=root")
 cursor = connection.cursor()
 
 # Get the result of a query

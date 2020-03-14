@@ -5,9 +5,15 @@ model = None
 
 # Load the trained model
 def load_models():
+	# model = kv.load_word2vec_format(
+	# 	'../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
+	# print(len(model.wv.vocab))
+
+	# A smaller vector model to do testing of algorithm
 	model = kv.load_word2vec_format(
-		'../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
+		'../PubMed-w2v.bin', binary=True)
 	print(len(model.wv.vocab))
+
 
 # Generate the similiarities and return
 def gen_sim(data, user_input):
