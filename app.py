@@ -29,10 +29,10 @@ def term_search():
     # Handle post request
     if request.method == 'GET':
         t1 = request.args.get('search')
-        results = dbreq.get_terms(t1)
+        ans = dbreq.get_terms(t1)
+        res = gens.gen_sim(ans, t1) 
         return jsonify(results)
 
-# cursor.close()
-# connection.close()
+
 if __name__ == "__main__":
     manager.run()
