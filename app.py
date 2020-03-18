@@ -23,15 +23,15 @@ manager.add_command('runserver', MyServer)
 def home():
     return render_template('main.html')
 
-# Handles user requests 
+# Handles user requests
 @app.route('/term-search', methods=["GET", "POST"])
 def term_search():
     # Handle post request
     if request.method == 'GET':
         t1 = request.args.get('search')
         ans = dbreq.get_terms(t1)
-        res = gens.gen_sim(ans, t1) 
-        return jsonify(results)
+        res = gens.gen_sim(ans, t1)
+        return jsonify(res)
 
 
 if __name__ == "__main__":

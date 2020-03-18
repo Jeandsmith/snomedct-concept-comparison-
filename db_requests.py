@@ -1,11 +1,10 @@
 import psycopg2 as pg
 # import time
 
-connection = pg.connect("dbname=snomed user=james password=root")
+connection = pg.connect("dbname=snomed user=postgres password=root")
 cursor = connection.cursor()
 
 # Get the result of a query
-
 
 def get_terms(q):
 
@@ -25,10 +24,10 @@ def get_terms(q):
     #   Postgresql handles indexing and queries
     query = '''
         SELECT distinct term, conceptId
-        FROM description, to_tsquery(%(search)s) as query 
+        FROM description, to_tsquery(%(search)s) as query
         WHERE term_idx @@ query;
     '''
 
     cursor.execute(query, {'search': t})
     ans = cursor.fetchall()
-    return results
+    return ans
