@@ -1,35 +1,37 @@
 from gensim.models import KeyedVectors as kv
+from nltk.corpus import stopwords
 
 model = None
+st = []
 
 # Load the trained model
 
 
 def load_models():
 	global model
-
+	global st
+	# Load the already trained model
 	model = kv.load_word2vec_format(
 		'../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
 	print(len(model.wv.vocab))
-
-	# A smaller vector model to do testing of algorithm
-	# local_model = kv.load_word2vec_format(
-	# 	'../PubMed-w2v.bin', binary=True)
-	# model = local_model
-	print(len(model.wv.vocab))
+	# Getting the list of current stop words maintained by nltk
+	st = stopwords.words("english")
 
 # 
 def sim(str1, str2):
-
-	from itertools import zip_longest
-
-	sp_str1 = str1.lower().split(' ')
-	sp_str2 = str2.lower().split(' ')
-
-	try:
-		return model.wv.n_similarity(sp_str1, sp_str2)
-	except KeyError as ke:
-		return 0.0
+	# Clean/remove the stop words from the search
+	sp_str1 = [word for word in str1.lower().split(' ') if word not in st]
+	sp_str2 = [word for word in str2.lower().split(' ') if word not in st]
+	# Make the comparisons.
+	# try:
+	# 	return model.wv.n_similarity(sp_str1, sp_str2)
+	# except KeyError as ke:
+	# 	return 0.0
+	# First let me see how does this look
+	print(f'String 1: {sp_str1}')
+	print(f'String 2: {sp_str2}')
+	# Return a bluf value 
+	return 0.0
 
 # Generate the similiarities and return
 def gen_sim(data, user_input):
@@ -39,11 +41,10 @@ def gen_sim(data, user_input):
 	# Process each row/tuple of data
 	for tup in data:
 		(term, concept_id,) = tup
-		similarity = sim(term, user_input)
 		res.append({
 				'term': term,
 				'concepId': concept_id,
-				'similarity': str(similarity)
+				'similarity': str(sim(term, user_input))
 		})
 
 	return res

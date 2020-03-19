@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\Root\\.virtualenvs\\snomedct-concept-comparison--eLsOeHT5\\Scripts\\python.exe"
+    "python.pythonPath": "/home/james/.local/share/virtualenvs/snomedct-concept-comparison--D17n51Qk/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
