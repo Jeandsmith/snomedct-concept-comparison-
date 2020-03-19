@@ -4,10 +4,11 @@ from nltk.corpus import stopwords
 model = None
 st = []
 
-# Load the trained model
-
-
 def load_models():
+	"""Load the pre-trained model
+	
+	load_model(None) -> Load the pre-trained model from file.
+	"""
 	global model
 	global st
 	# Load the already trained model
