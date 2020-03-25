@@ -22,8 +22,9 @@ def get_terms(q):
         print(t)
 
     #   Postgresql handles indexing and queries
+    # conceptId
     query = '''
-        SELECT distinct term, conceptId
+        SELECT distinct term
         FROM description, to_tsquery(%(search)s) as query
         WHERE term_idx @@ query;
     '''

@@ -15,6 +15,7 @@ gensim = "*"
 numpy = "*"
 psycopg2 = "*"
 flask-script = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.8"
