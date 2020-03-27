@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,UAAU,CAAC;EACP,QAAQ,EAAE,QAAQ;EAElB,GAAG,EAAE,KAAK;EACV,IAAI,EAAE,KAAK;CACd",
+    "sources": [
+        "bottomPos.scss"
+    ],
+    "names": [],
+    "file": "bottomPos.css"
+}
