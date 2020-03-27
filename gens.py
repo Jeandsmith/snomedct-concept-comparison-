@@ -72,7 +72,7 @@ def gen_sim(documents, query):
     (h, w) = df.shape
     df.insert(loc=w, value=sims, column="Similarities")
     # Sort the values by similarity to query descending
-    df.sort_values(by=['Term', "Similarities"], ascending=False, inplace=True)
+    # df.sort_values(by=['Term', "Similarities"], ascending=False, inplace=True)
     # # Export as records ([{Term, ID, Sim}, {Term, ID, Sim}])
     res = df.to_dict('records')
     # print(res)
