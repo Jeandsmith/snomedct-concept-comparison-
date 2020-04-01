@@ -89,18 +89,18 @@ resource_folder = 'resources/'
 dictionary = Dictionary.load(f'{resource_folder}dict.mm')
 
 # Current model
-model = KeyedVectors.load_word2vec_format(
-    '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
+# model = KeyedVectors.load_word2vec_format(
+#     '../wikipedia-pubmed-and-PMC-w2v.bin', binary=True)
 
 # # # Use cosine similarity as index for future queries
 # similarity_index = WordEmbeddingSimilarityIndex(model)
 # similarity_index.save(f'{resource_folder}sim_index.mm')
-similarity_index = WordEmbeddingSimilarityIndex.load(f'{resource_folder}sim_index.mm')
+# similarity_index = WordEmbeddingSimilarityIndex.load(f'{resource_folder}sim_index.mm')
 
 # # # Create similarity matrix
-similarity_matrix = SparseTermSimilarityMatrix(similarity_index, dictionary, tfidf=None, nonzero_limit=100)
-similarity_matrix.save(f'{resource_folder}sim_mat.mm')
-# similarity_matrix = SparseTermSimilarityMatrix.load(f'{resource_folder}sim_mat.mm')
+# similarity_matrix = SparseTermSimilarityMatrix(similarity_index, dictionary, tfidf=None, nonzero_limit=100)
+# similarity_matrix.save(f'{resource_folder}sim_mat.mm')
+similarity_matrix = SparseTermSimilarityMatrix.load(f'{resource_folder}sim_mat.mm')
 
 # # # Simple test query mapped to tfid weighted space
 test_query = dictionary.doc2bow(word_tokenize("Heart".lower()), allow_update=True)
@@ -126,3 +126,4 @@ softq = soft[test_query]
 print(f'c_res = {c_res}')
 print(f'c_res_2 = {c_res_2}')
 print(f'sp_res = {sp_res}')
+print(f'Soft = {softq}')

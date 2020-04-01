@@ -3,16 +3,16 @@
 
 // var prevClickedItems = [];
 // var thisItemId = { ID: undefined, Term: undefined }; // Just for init
-var term;
 var newestItemId = 0;
 
 function loadItemClickEvent() {
 
   // Select all collection items and assign a click event
-  $("a.collection-item").on("click", () => {
+  $("a.collection-item").on("click", function () {
 
     newItemView = "";
     var thisItem = $(this);
+    var term;
     var viewSection = $("div#view");
 
     // If there is nothing on the screen
@@ -22,27 +22,29 @@ function loadItemClickEvent() {
       term = thisItem.children().children("span.term").text();
 
       newItemView = ` 
-        <div class="col s6" id="${newestItemId.toString()}">
-          <h2 class="header">${term}</h2>
-          <div class="card horizontal">
-            <div class="card-stacked">
-              <div class="card-content">
-                <ul class="collection">
-                  <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
-                </ul>
-              </div>
+      <div class="col s6" id="${newestItemId.toString()}">
+        <h2 class="header">${term}</h2>
+        <div class="card horizontal">
+          <div class="card-stacked">
+            <div class="card-content">
+              <ul class="collection">
+                <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
+              </ul>
             </div>
           </div>
-      </div>
-      `;
+        </div>
+      </div>`;
 
       viewSection.append(newItemView);
       thisItem.attr('id', newestItemId.toString());
       thisItem.data('onScreen', true);
+      console.log(`Item added: ${thisItem}`);
     }
 
     // If there is a item on the screen and this item is not clicked yet
     else if (!thisItem.data('onScreen') && viewSection.children().length) {
+
+      console.log("Theris is something on the screen. Checking if there is an item with this ID");
 
       // Gen the id of this item
       newestItemId = (newestItemId + 1) % 2;
@@ -51,12 +53,15 @@ function loadItemClickEvent() {
 
       // If the view section has something with this ID
       if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+        console.log("Removing item with this id for the scree.");
+
         viewSection.children(`div#${newestItemId.toString()}`).remove();
 
         var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
         prevItem.removeAttr('id');
         prevItem.data('onScreen', false);
-      }
+        console.log(`Done removing`);
+      }else console.log(`There is no item with this id. Adding this item.`);
 
       // Gen the identity of this item for the record
       term = thisItem.children().children("span.term").text();
@@ -64,16 +69,16 @@ function loadItemClickEvent() {
       // Append the view to the screen
       newItemView = ` 
       <div class="col s6" id="${newestItemId.toString()}">
-      <h2 class="header">${term}</h2>
-      <div class="card horizontal">
-      <div class="card-stacked">
-      <div class="card-content">
-      <ul class="collection">
-      <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
-      </ul>
-      </div>
-      </div>
-      </div>
+        <h2 class="header">${term}</h2>
+          <div class="card horizontal">
+            <div class="card-stacked">
+              <div class="card-content">
+                <ul class="collection">
+                <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
       `;
 
@@ -85,6 +90,7 @@ function loadItemClickEvent() {
     }
 
     else if (thisItem.data('onScreen')) {
+      console.log(`Removing this item from the screen.`);
       var itemId = thisItem.attr(`id`);
 
       viewSection.children(`div#${itemId.toString()}`).remove();
@@ -95,6 +101,9 @@ function loadItemClickEvent() {
 
       thisItem.data('onScreen', false);
       thisItem.removeAttr('id');
+
+      console.log(`Done removing`);
+
     }
   });
 }
