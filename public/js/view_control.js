@@ -1,91 +1,100 @@
 // Begin an ID counter -- to keep track of current view ID
+// this -- refers to the thing I am clicking
+
+// var prevClickedItems = [];
+// var thisItemId = { ID: undefined, Term: undefined }; // Just for init
+var term;
+var newestItemId = 0;
 
 function loadItemClickEvent() {
-  let c = 0;
-
-  let prevTerms = [-1];
 
   // Select all collection items and assign a click event
-  $("a.collection-item").on("click", function () {
+  $("a.collection-item").on("click", () => {
 
-    console.log('Clicked');
+    newItemView = "";
+    var thisItem = $(this);
+    var viewSection = $("div#view");
 
-    // Grab the view section from the DOM
-    var $this = $("div#view");
+    // If there is nothing on the screen
+    if (!viewSection.children().length) {
 
-    // If this collection item has not been clicked
-    if (!$(this).data("clicked")) {
-      // Generate the ID of the new view
-      var kc = c % 2;
+      newestItemId = 0;
+      term = thisItem.children().children("span.term").text();
 
-      var term = $(this)
-        .children()
-        .children("span.term")
-        .text();
+      newItemView = ` 
+        <div class="col s6" id="${newestItemId.toString()}">
+          <h2 class="header">${term}</h2>
+          <div class="card horizontal">
+            <div class="card-stacked">
+              <div class="card-content">
+                <ul class="collection">
+                  <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+      </div>
+      `;
 
-      // Fix the id
-      var termId = term.replace(/[\s,]+/g, "-");
+      viewSection.append(newItemView);
+      thisItem.attr('id', newestItemId.toString());
+      thisItem.data('onScreen', true);
+    }
 
-      if (prevTerms.length > 1) {
-        // Get the previous term id from hist
-        var prevId = prevTerms.shift();
+    // If there is a item on the screen and this item is not clicked yet
+    else if (!thisItem.data('onScreen') && viewSection.children().length) {
 
-        // Get the oldest term by class id
-        var prevTerm = $("." + prevId.toString());
+      // Gen the id of this item
+      newestItemId = (newestItemId + 1) % 2;
 
-        // Remove the previous view with oldest id
-        $this.children("div." + prevId.toString()).remove();
+      console.log(`${newestItemId}`);
 
-        // Make oldest term not clicked
-        prevTerm.data("clicked", false);
+      // If the view section has something with this ID
+      if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+        viewSection.children(`div#${newestItemId.toString()}`).remove();
 
-        // Now that is not clicked, removed the id class
-        prevTerm.removeClass(prevId.toString());
+        var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
+        prevItem.removeAttr('id');
+        prevItem.data('onScreen', false);
       }
 
-      // Generate the DOM Object
-      // kc.toString() -- Converts the ID of this view to string object instead of int
-      var html = [
-        '<div class="col s6 ',
-        kc.toString(),
-        '" id="',
-        termId,
-        '">',
-        "<h4>",
-        term,
-        "</h4>",
-        '<div class="division"></div>',
-        "<h5>Similarity</h5>",
-        "<h4>Parents</h4>",
-        "</div>"
-      ];
+      // Gen the identity of this item for the record
+      term = thisItem.children().children("span.term").text();
 
-      // Queue the # id
-      prevTerms.push(kc);
+      // Append the view to the screen
+      newItemView = ` 
+      <div class="col s6" id="${newestItemId.toString()}">
+      <h2 class="header">${term}</h2>
+      <div class="card horizontal">
+      <div class="card-stacked">
+      <div class="card-content">
+      <ul class="collection">
+      <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
+      </ul>
+      </div>
+      </div>
+      </div>
+      </div>
+      `;
 
-      console.log(prevTerms);
+      viewSection.append(newItemView);
 
-      // Append the new (this) view to the DOM
-      $this.append(html.join(""));
+      // Association of this item to the view item
+      thisItem.attr('id', newestItemId.toString());
+      thisItem.data('onScreen', true);
+    }
 
-      // Update the term id # and set this collection-item to clicked
-      $(this).data("clicked", true);
+    else if (thisItem.data('onScreen')) {
+      var itemId = thisItem.attr(`id`);
 
-      $(this).data("id", termId);
+      viewSection.children(`div#${itemId.toString()}`).remove();
 
-      $(this).addClass(kc.toString());
+      if (itemId == newestItemId) {
+        newestItemId = (newestItemId + 1) % 2;
+      }
 
-      c = kc + 1;
-    } else {
-      // Delete the view and set the term to not cliked
-
-      console.log("Deliting");
-
-      $this.children("div#" + $(this).data("id")).remove();
-
-      $(this).data("clicked", false);
-
-      prevTerms.find();
+      thisItem.data('onScreen', false);
+      thisItem.removeAttr('id');
     }
   });
-};
+}

@@ -26,9 +26,9 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/bottomPos.css">
+    <!-- <link rel="stylesheet" href="css/bottomPos.css"> -->
 
-    <script src="js/underscore.js"></script>
+    <script src="js/jquery.ba-throttle-debounce.js"></script>
 
     <title>SNOMED CT Term Comparison</title>
 </head>
@@ -54,22 +54,18 @@
 
     <!--  -->
     <div class="section container">
-        <h3>Search Terms</h3>
+        <h4>Search Terms</h4>
     </div>
 
     <div class="section">
         <div class="row">
-
-            <!-- Radio Section -->
-            <div class="col s1">
-                <form action="/filter-search" method="GET">
-                    <p>
-                        <label>
-                            <input name="group1" type="radio" checked />
-                            <span>Finding</span>
-                        </label>
-                    </p>
-                </form>
+            
+            <!-- Filter section -->
+            <div class="col s2">
+                <h5>Semantic Tag</h5>
+                <div id="filter-form">
+                    <!-- Filters are here -->
+                </div>
             </div>
 
             <!-- Result Collection -->
@@ -79,12 +75,12 @@
                         <h5>Term</h5>
                     </li>
                     <span id="collection-item-section">
-
+                        {% block results %} {% endblock %}
                     </span>
                 </ul>
             </div>
 
-            <div class="col s7">
+            <div class="col s6">
                 <div class="row" id="view">
                     <!-- Views -->
                 </div>
@@ -95,7 +91,9 @@
 
     <!--JavaScript at end of body for optimized loading-->
     <script src="js/materialize.min.js"></script>
+    <script src="js/cp.js"></script>
     <script src="js/view_control.js"></script>
+    <script src="js/filter.js"></script>
     <script src="js/live_search.js"></script>
     <!-- <script src="js/clear_prev_content.js"></script> -->
     <!-- <script src="js/load_data.js"></script> -->

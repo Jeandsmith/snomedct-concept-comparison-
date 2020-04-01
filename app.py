@@ -5,35 +5,24 @@ from time import sleep
 from flask_script import Server, Manager
 import gens
 
-# Custom server to load data at server startup
-class MyServer(Server):
-    def __call__(self, app, *args, **kargs):
-
-        # Load the w2v model
-        gens.load_models()
-
-        return Server.__call__(self, app, *args, **kargs)
-
 app = Flask(__name__, static_folder='public/')
-manager = Manager(app)
-manager.add_command('runserver', MyServer)
 
 # Handle home page
 @app.route('/')
 def home():
-    return render_template('main.html')
+    return render_template('template.html')
 
 # Handles user requests
 @app.route('/term-search', methods=["GET", "POST"])
 def term_search():
-    # Handle post request
     if request.method == 'GET':
         t1 = request.args.get('search')
-        print(f'{t1} -- From app.js')
         ans = dbreq.get_terms(t1)
         res = gens.gen_sim(ans, t1)
         return jsonify(res)
 
-
-if __name__ == "__main__":
-    manager.run()
+@app.route('/filter')
+def filter():
+    res = dbreq.filtered_terms(request.args.get("tag"), request.args.get("query"))
+    sim_res = gens.gen_sim(res, request.args.get("query"))
+    return jsonify(sim_res)
