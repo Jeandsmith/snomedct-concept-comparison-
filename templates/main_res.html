@@ -1,6 +1,5 @@
 {% extends "template.html" %}
-
-{% block content %}
+{% block results %}
 {% for result in results: %}
 <a href="#!" class="collection-item" id="{{ term }}" truncate>
     <p class="content">
@@ -10,5 +9,3 @@
 </a>
 {% endfor %}
 {% endblock %}
-
-<!-- Assign side panels here -->

@@ -1,13 +1,18 @@
 $(() => {
-  $("div.input-field input").keyup(_.debounce(event => {
+  $("div.input-field input").keyup($.debounce(1000, event => {
+    
     // Get the length of the input
     var len = event.currentTarget.value.length;
+
     // Only make a request to the server if the input is at least 3 chars long
     if (len >= 3) {
+
       //  Show indetermined progress
       var progress = $("div#p-container");
+
       // Remove the previous displayed results
       progress.children().remove();
+
       // Append to the DOM
       progress.append(`
             <div class="progress" style="margin-top: 0px; height: 5px;">
@@ -17,8 +22,13 @@ $(() => {
       // Get where the results will display
       var col = $("span#collection-item-section");
 
+      // Where the filter will be displayed
+      var filterForm = $("div#filter-form");
+      filterForm.children().remove();
+
       // Remove all previous children
       col.children().remove();
+
       // Make the request to the server for terms
       var jqxhr = $.ajax({
         url: "/term-search",
@@ -29,12 +39,36 @@ $(() => {
         method: "get",
         cache: true,
         success: gathered_terms => {
+          // Eliminate the previous results
           progress.children().remove();
 
-          // Make the objects to an array
+          // Covert the jsonp to an array
           var arr = $.makeArray(gathered_terms);
+          // console.log(typeof arr[0].Tag);
+
+          // Sort the data by similarity
+          arr.sort(compareValues('Similarities', 'desc'));
+
+          let tags = [];
 
           $.map(arr, (term, index) => {
+
+            if (!tags.includes(term.Tag)) {
+              tags.push(term.Tag);
+
+              let t = (term.Tag === "0") ? "No tag" : term.Tag;
+
+              // Add the filter section
+              filterForm.append(`
+              <p>
+                <label>
+                    <input name="group1" type="radio"/>
+                    <span class="term_tag"> ${t} </span>
+                </label>
+              </p>`
+              );
+            }
+
             var html = [
               '<a href="#!" class="collection-item" truncate>',
               '<p class="content">',
@@ -50,15 +84,15 @@ $(() => {
           });
 
           M.toast({
-            html: ["Returned Results: ", arr.length].join(' '),
-            classes: 'bottomPos'
+            html: ["Returned Results: ", arr.length].join(' ')
           });
 
           loadItemClickEvent();
+          loadRadioClicks();
         },
-        async: false
+        async: true
         // timeout: 3000
       });
     }
-  }), 250);
+  }));
 });
