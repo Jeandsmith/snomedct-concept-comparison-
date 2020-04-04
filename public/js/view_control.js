@@ -38,29 +38,21 @@ function loadItemClickEvent() {
       viewSection.append(newItemView);
       thisItem.attr('id', newestItemId.toString());
       thisItem.data('onScreen', true);
-      console.log(`Item added: ${thisItem}`);
     }
 
     // If there is a item on the screen and this item is not clicked yet
     else if (!thisItem.data('onScreen') && viewSection.children().length) {
 
-      console.log("Theris is something on the screen. Checking if there is an item with this ID");
-
       // Gen the id of this item
       newestItemId = (newestItemId + 1) % 2;
 
-      console.log(`${newestItemId}`);
-
       // If the view section has something with this ID
       if (viewSection.children(`div#${newestItemId.toString()}`).length) {
-        console.log("Removing item with this id for the scree.");
-
         viewSection.children(`div#${newestItemId.toString()}`).remove();
 
         var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
         prevItem.removeAttr('id');
         prevItem.data('onScreen', false);
-        console.log(`Done removing`);
       }else console.log(`There is no item with this id. Adding this item.`);
 
       // Gen the identity of this item for the record
@@ -90,7 +82,6 @@ function loadItemClickEvent() {
     }
 
     else if (thisItem.data('onScreen')) {
-      console.log(`Removing this item from the screen.`);
       var itemId = thisItem.attr(`id`);
 
       viewSection.children(`div#${itemId.toString()}`).remove();
@@ -101,9 +92,6 @@ function loadItemClickEvent() {
 
       thisItem.data('onScreen', false);
       thisItem.removeAttr('id');
-
-      console.log(`Done removing`);
-
     }
   });
 }
