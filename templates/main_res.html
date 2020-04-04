@@ -1,7 +1,8 @@
 {% extends "template.html" %}
+
 {% block results %}
 {% for result in results: %}
-<a href="#!" class="collection-item" id="{{ term }}" truncate>
+<a href="#!" class="collection-item" truncate>
     <p class="content">
         <span class="term">{{ result.s_term }}</span> <br>
         <span class="similarity">Similarity Score: {{ result.similarity }}</span>
