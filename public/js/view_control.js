@@ -5,93 +5,103 @@
 // var thisItemId = { ID: undefined, Term: undefined }; // Just for init
 var newestItemId = 0;
 
+
+function newItemView(term, conceptId, sim, id, terms) {
+
+  // TODO: Organize the terms in the list
+  // TODO: Fix order of list with the fsn on top
+
+  var li = '';
+  $.map(terms, term => {
+    li += `<span class="tiny material-icons">lens</span> ${term} <br>`;
+  });
+
+  var item = ` 
+      <div class="col s6" id="${id.toString()}">
+        <div class="card hoverable theme">
+          <div class="card-content">
+            <span class="card-title">${conceptId} | ${term}</span>
+            <p> ${sim}: Against Query</p>
+            <br>
+            <p>
+            ${
+              li
+            }
+            </p>
+          </div>
+        </div>
+      </div>`;
+
+  return item;
+}
+
 function loadItemClickEvent() {
 
   // Select all collection items and assign a click event
   $("a.collection-item").on("click", function () {
 
-    newItemView = "";
     var thisItem = $(this);
     var term;
     var viewSection = $("div#view");
 
-    // If there is nothing on the screen
-    if (!viewSection.children().length) {
+    term = thisItem.children().children("span.term").text();
+    sim = thisItem.children().children("span.similarity").text();
+    conceptId = thisItem.children().children("span.term").attr('data-conceptid');
 
-      newestItemId = 0;
-      term = thisItem.children().children("span.term").text();
+    // Get the synonism
+    $.ajax({
+      url: '/descriptions',
+      method: 'get',
+      data: { id: conceptId },
+      contentType: 'application/json',
+      cache: false,
+      async: true,
+      success: terms => {
 
-      newItemView = ` 
-      <div class="col s6" id="${newestItemId.toString()}">
-        <h2 class="header">${term}</h2>
-        <div class="card horizontal">
-          <div class="card-stacked">
-            <div class="card-content">
-              <ul class="collection">
-                <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>`;
+        // If there is nothing on the screen
+        if (!viewSection.children().length) {
 
-      viewSection.append(newItemView);
-      thisItem.attr('id', newestItemId.toString());
-      thisItem.data('onScreen', true);
-    }
+          newestItemId = 0;
+          viewSection.append(newItemView(term, conceptId, sim, newestItemId, terms));
+          thisItem.attr('id', newestItemId.toString());
+          thisItem.data('onScreen', true);
+        }
 
-    // If there is a item on the screen and this item is not clicked yet
-    else if (!thisItem.data('onScreen') && viewSection.children().length) {
+        // If there is a item on the screen and this item is not clicked yet
+        else if (!thisItem.data('onScreen') && viewSection.children().length) {
 
-      // Gen the id of this item
-      newestItemId = (newestItemId + 1) % 2;
+          // Gen the id of this item
+          newestItemId = (newestItemId + 1) % 2;
 
-      // If the view section has something with this ID
-      if (viewSection.children(`div#${newestItemId.toString()}`).length) {
-        viewSection.children(`div#${newestItemId.toString()}`).remove();
+          // If the view section has something with this ID
+          if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+            viewSection.children(`div#${newestItemId.toString()}`).remove();
 
-        var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
-        prevItem.removeAttr('id');
-        prevItem.data('onScreen', false);
-      }else console.log(`There is no item with this id. Adding this item.`);
+            var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
+            prevItem.removeAttr('id');
+            prevItem.data('onScreen', false);
+          }
 
-      // Gen the identity of this item for the record
-      term = thisItem.children().children("span.term").text();
+          viewSection.append(newItemView(term, conceptId, sim, newestItemId, terms));
 
-      // Append the view to the screen
-      newItemView = ` 
-      <div class="col s6" id="${newestItemId.toString()}">
-        <h2 class="header">${term}</h2>
-          <div class="card horizontal">
-            <div class="card-stacked">
-              <div class="card-content">
-                <ul class="collection">
-                <li class="collection-item"><i class="material-icons>lens</i>Alvin</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      `;
+          // Association of this item to the view item
+          thisItem.attr('id', newestItemId.toString());
+          thisItem.data('onScreen', true);
+        }
 
-      viewSection.append(newItemView);
+        else if (thisItem.data('onScreen')) {
+          var itemId = thisItem.attr(`id`);
 
-      // Association of this item to the view item
-      thisItem.attr('id', newestItemId.toString());
-      thisItem.data('onScreen', true);
-    }
+          viewSection.children(`div#${itemId.toString()}`).remove();
 
-    else if (thisItem.data('onScreen')) {
-      var itemId = thisItem.attr(`id`);
+          if (itemId == newestItemId) {
+            newestItemId = (newestItemId + 1) % 2;
+          }
 
-      viewSection.children(`div#${itemId.toString()}`).remove();
-
-      if (itemId == newestItemId) {
-        newestItemId = (newestItemId + 1) % 2;
+          thisItem.data('onScreen', false);
+          thisItem.removeAttr('id');
+        }
       }
-
-      thisItem.data('onScreen', false);
-      thisItem.removeAttr('id');
-    }
+    });
   });
 }

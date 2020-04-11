@@ -42,23 +42,21 @@ function loadRadioClicks() {
 
                 // Sort the data by similarity
                 arr.sort(compareValues('Similarities', 'desc'));
-
-                console.log(arr);
+                
+                // console.log(arr);
 
                 $.map(arr, (term, index) => {
 
-                    var html = [
-                        '<a href="#!" class="collection-item" truncate>',
-                        '<p class="content">',
-                        '<span class="term">',
-                        term.Term,
-                        "</span> <br>",
-                        '<span class="similarity"> Similarity Score:',
-                        term.Similarities,
-                        "</span></p>",
-                        "</a>"
-                    ];
-                    col.append(html.join(""));
+                    var html = `
+                        <a href="#!" class="collection-item" truncate>
+                        <p class="content">
+                        <span class="term" data-conceptid=${term.conceptId}>
+                            ${term.Term} </span> <br>
+                        <span class="similarity"> Similarity Score: ${term.Similarities}
+                        </span></p>
+                        </a>
+                    `;
+                    col.append(html);
                 });
 
                 M.toast({

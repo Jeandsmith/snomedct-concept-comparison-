@@ -1,12 +1,22 @@
-$font-stack: Helvetica,
-sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import 'sass/materialize.scss';
+
+$fam: 'Open Sans', sans-serif;
+$font-stack: 'Open Sans';
+
 $primary-color: #333;
 
 body {
+  font-family: $fam;
   font: 100% $font-stack;
   color: $primary-color;
   //   background: firebrick;
   height: 100%;
+}
+
+.theme {
+  @extend .blue, .darken-1;
+  @extend .white-text;
 }
 
 table tbody,

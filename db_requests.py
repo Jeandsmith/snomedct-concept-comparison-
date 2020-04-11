@@ -38,9 +38,11 @@ def get_terms(q, *argv):
     # conceptId
     if not tt:
         query = '''
-        SELECT distinct term, tag
-        FROM searchable_terms as st, to_tsquery(%(search)s) as q
-        WHERE st.searchable_term_index @@ q;
+            SELECT DISTINCT vs.search_term, tag, vs.conceptId
+            FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
+            WHERE 
+	            idx_term @@ q AND
+	            st.conceptId = vs.conceptId 
         '''
 
         cursor.execute(query, {'search': t})
@@ -52,23 +54,14 @@ def get_terms(q, *argv):
         if tt == "No tag":
             tt = "0"
 
-        # if ' ' in tt:
-        #     tt = tt.replace(' ', ' & ')
-
-        # print(f"Tag: {tt}")
-        # query = '''
-        # SELECT distinct term, tag
-        # FROM searchable_terms as st, to_tsquery(%(search)s) as q, to_tsquery(%(tag)s) as tt
-        # WHERE st.searchable_term_index @@ q
-        # AND st.searchable_tag_index @@ tt;
-        # '''
-
         query = '''
-        SELECT distinct term, tag
-        FROM searchable_terms as st, to_tsquery(%(search)s) as q
-        WHERE st.searchable_term_index @@ q
-        AND tag = %(tag)s;
-        '''
+            SELECT DISTINCT search_term, tag, vs.conceptId
+            FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
+            WHERE 
+	        idx_term @@ q AND
+	        st.conceptId = vs.conceptId AND
+	        st.tag = %(tag)s;
+            '''
 
         cursor.execute(query, {'search': t, 'tag': tt})
 
@@ -77,3 +70,21 @@ def get_terms(q, *argv):
 
     # Send them away
     return ans
+
+# Get the term synonyms and fsn
+
+
+def get_alt_terms(conceptId):
+    if not conceptId:
+        return []
+
+    query = '''
+        SELECT DISTINCT search_term
+        FROM sct2_v_searchable AS vs
+        WHERE vs.conceptId = %(conceptId)s;
+    '''
+
+    cursor.execute(query, {'conceptId': conceptId})
+    ans = cursor.fetchall()
+    return ans
+

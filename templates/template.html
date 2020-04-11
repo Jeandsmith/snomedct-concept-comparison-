@@ -35,8 +35,8 @@
 
 <body>
     <nav>
-        <div class="nav-wrapper">
-            <form id="search-form" action="#!" >
+        <div class="nav-wrapper theme">
+            <form id="search-form" action="#!" onkeydown="if (event.which === 13) event.preventDefault();">
                 <div class="input-field white-text">
                     <input id="search" type="search" name="search" required placeholder="Search"
                         onfocus="this.value=''">
@@ -62,7 +62,7 @@
             
             <!-- Filter section -->
             <div class="col s2">
-                <h5>Semantic Tag</h5>
+                <h5 class="center-align">Semantic Tag</h5>
                 <div id="filter-form">
                     <!-- Filters are here -->
                 </div>
@@ -75,7 +75,7 @@
                         <h5>Term</h5>
                     </li>
                     <span id="collection-item-section">
-                        {% block results %} {% endblock %}
+                        
                     </span>
                 </ul>
             </div>

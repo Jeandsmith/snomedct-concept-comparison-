@@ -21,8 +21,20 @@ def term_search():
         res = gens.gen_sim(ans, t1)
         return jsonify(res)
 
+
 @app.route('/filter')
 def filter():
-    res = dbreq.filtered_terms(request.args.get("tag"), request.args.get("query"))
+    res = dbreq.filtered_terms(request.args.get(
+        "tag"), request.args.get("query"))
     sim_res = gens.gen_sim(res, request.args.get("query"))
     return jsonify(sim_res)
+
+
+@app.route('/descriptions')
+def descriptions():
+    conceptId = request.args.get('id')
+    print(f'Id gathered: {conceptId}')
+    # query = request.args.get('query')
+    ans = dbreq.get_alt_terms(conceptId)
+    # res = gens.gen_sym_sim(ans, query)
+    return jsonify(ans)

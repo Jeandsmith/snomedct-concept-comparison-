@@ -1,5 +1,8 @@
+// Getting export function from cp module
+
 $(() => {
-  $("div.input-field input").keyup($.debounce(1000, event => {
+
+  $("div.input-field input").keyup($.debounce(800, event => {
     
     // Get the length of the input
     var len = event.currentTarget.value.length;
@@ -37,7 +40,6 @@ $(() => {
           search: event.currentTarget.value
         },
         method: "get",
-        cache: true,
         success: gathered_terms => {
           // Eliminate the previous results
           progress.children().remove();
@@ -69,18 +71,17 @@ $(() => {
               );
             }
 
-            var html = [
-              '<a href="#!" class="collection-item" truncate>',
-              '<p class="content">',
-              '<span class="term">',
-              term.Term,
-              "</span> <br>",
-              '<span class="similarity"> Similarity Score:',
-              term.Similarities,
-              "</span></p>",
-              "</a>"
-            ];
-            col.append(html.join(""));
+            var html = `
+            <a href="#!" class="collection-item" truncate>
+              <p class="content">
+              <span class="term" data-conceptid=${term.conceptId}>
+                ${term.Term} </span> <br>
+              <span class="similarity"> Cosine Similarity: ${term.Similarities}
+              </span></p>
+            </a>
+            
+            `;
+            col.append(html);
           });
 
           M.toast({

@@ -1,58 +1,47 @@
-# Import Keyvector to load pre-trained model
-from gensim.models import KeyedVectors as kv
-# Import to generate the index of embedded words trough similarity
-from gensim.models import WordEmbeddingSimilarityIndex
-# Import for the generation of BOW corpus with weighted word count
-from gensim.models import TfidfModel
-# Import for simple prepocessing of the documents by coverting to lowercased tokens
+from gensim.models import LsiModel
 from gensim.utils import simple_preprocess
-# Import for the calculation of the soft cosine similarity against a corpus
 from gensim.similarities import Similarity
-# Import for the generation of a dictionary which maps each token in a document to an unique ID
 from gensim.corpora import Dictionary
 import pandas as pd
 import logging
-from nltk import word_tokenize
-from numpy import round
 
 logging.basicConfig(
     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 res_path = 'resources/'
-# model = None
-# sim_index = None
-# dictionary = None
+# Preload dictionary and model
+lsi = LsiModel.load(f'{res_path}lsi_model.mm')
+dictionary = LsiModel.load(f'{res_path}dictionary.dict')
 
 
 def gen_sim(documents, query):
 
-    # Load the dictionary
-    dictionary = Dictionary.load(f'{res_path}dict.mm')
-
     # Convert the query result from a list of tuples to pandas DataFrame(Rows and Columns)
-    df = pd.DataFrame(documents, columns=["Term", "Tag"])
+    df = pd.DataFrame(documents, columns=["Term", "Tag", "conceptId"])
 
     # Make copy of terms to work with after dropping empty values
     df["Term"].dropna(inplace=True)
     docs = df['Term'].values
 
     # Convert the terms to a list of corpus (corpora) (id: word)
+    global dictionary
     bow_corpus = [dictionary.doc2bow(
-        word_tokenize(doc.lower())) for doc in docs]
+        simple_preprocess(doc)) for doc in docs]
 
     # Generate the sim matrix against corpus using already embedded words
     # Also, Similarity is scaleable
-    index = Similarity(output_prefix=None, corpus=bow_corpus,
+    global dictionary
+    global lsi
+    index = Similarity(output_prefix=None, corpus=lsi[bow_corpus],
                        num_features=len(dictionary))
 
     # Conver query to a corpus
-    print(f'{query} -- From gen.py')
-    q = dictionary.doc2bow(word_tokenize(query.lower()), allow_update=True)
+    q = dictionary.doc2bow(simple_preprocess(query), allow_update=True)
 
     # Get the similarities
-    print(f'{q} -- Query as corpus')
     try:
-        sims = index[q]
+        sims = index[lsi[q]]
+
         # loc (location): index of insertion
         # value: value col to be inserted
         # column: Column header
@@ -71,3 +60,11 @@ def gen_sim(documents, query):
         # doc = [query.lower().split(' ')]
         # sims = index[q]
         return []
+
+
+def gen_concept_sim(term, comparison_terms):
+    '''
+        Generate the similarity of searched term to it fsn and synonyms
+    '''
+
+    pass
