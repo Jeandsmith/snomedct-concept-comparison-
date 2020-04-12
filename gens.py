@@ -9,6 +9,7 @@ logging.basicConfig(
     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 res_path = 'resources/'
+
 # Preload dictionary and model
 lsi = LsiModel.load(f'{res_path}lsi_model.mm')
 dictionary = LsiModel.load(f'{res_path}dictionary.dict')
