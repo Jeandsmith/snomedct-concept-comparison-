@@ -42,7 +42,7 @@ def get_terms(q, *argv):
             FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
             WHERE 
 	            idx_term @@ q AND
-	            st.conceptId = vs.conceptId 
+	            st.conceptId = vs.conceptId
         '''
 
         cursor.execute(query, {'search': t})
@@ -55,7 +55,7 @@ def get_terms(q, *argv):
             tt = "0"
 
         query = '''
-            SELECT search_term, tag, DISTINCT vs.conceptId
+            SELECT DISTINCT search_term, tag, vs.conceptId
             FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
             WHERE 
 	        idx_term @@ q AND

@@ -13,24 +13,31 @@ function newItemView(term, conceptId, sim, id, terms) {
 
   var li = '';
   $.map(terms, term => {
-    li += `<span class="tiny material-icons">lens</span> ${term} <br>`;
+    li += `<span class="tiny material-icons">lens</span> 
+      ${term.Term} | 
+      <span class="tooltipped" data-position="top" data-tooltip="Cosine similarity against the clicked term">${term.Similarities} </span> <br>`;
   });
 
   var item = ` 
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
           <div class="card-content">
-            <span class="card-title">${conceptId} | ${term}</span>
+            <span class="card-title tooltipped" data-position='top' data-tooltip="Cosine similarity of clicked term against the query">${conceptId} | ${term}</span>
             <p> ${sim}: Against Query</p>
             <br>
             <p>
             ${
-              li
-            }
+    li
+    }
             </p>
           </div>
         </div>
       </div>`;
+
+  $(document).ready(function () {
+    $('.tooltipped').tooltip();
+  });
+
 
   return item;
 }
@@ -52,7 +59,7 @@ function loadItemClickEvent() {
     $.ajax({
       url: '/descriptions',
       method: 'get',
-      data: { id: conceptId },
+      data: { id: conceptId, query: term },
       contentType: 'application/json',
       cache: false,
       async: true,

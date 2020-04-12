@@ -11,14 +11,11 @@ logging.basicConfig(
 res_path = 'resources/'
 
 # Preload dictionary and model
-lsi = LsiModel.load(f'{res_path}lsi_model.mm')
-dictionary = LsiModel.load(f'{res_path}dictionary.dict')
+# lsi = LsiModel.load(f'{res_path}lsi_model.mm')
+dictionary = Dictionary.load(f'{res_path}dictionary.dict')
 
 
-def gen_sim(documents, query):
-
-    # Convert the query result from a list of tuples to pandas DataFrame(Rows and Columns)
-    df = pd.DataFrame(documents, columns=["Term", "Tag", "conceptId"])
+def gen_sim(query, df):
 
     # Make copy of terms to work with after dropping empty values
     df["Term"].dropna(inplace=True)
@@ -32,8 +29,8 @@ def gen_sim(documents, query):
     # Generate the sim matrix against corpus using already embedded words
     # Also, Similarity is scaleable
     global dictionary
-    global lsi
-    index = Similarity(output_prefix=None, corpus=lsi[bow_corpus],
+
+    index = Similarity(output_prefix=None, corpus=bow_corpus,
                        num_features=len(dictionary))
 
     # Conver query to a corpus
@@ -41,7 +38,7 @@ def gen_sim(documents, query):
 
     # Get the similarities
     try:
-        sims = index[lsi[q]]
+        sims = index[q]
 
         # loc (location): index of insertion
         # value: value col to be inserted
@@ -58,14 +55,13 @@ def gen_sim(documents, query):
         # print(res)
         return res
     except:
-        # doc = [query.lower().split(' ')]
-        # sims = index[q]
         return []
 
 
-def gen_concept_sim(term, comparison_terms):
-    '''
-        Generate the similarity of searched term to it fsn and synonyms
-    '''
+def gen_query_term_sim(comparison_terms, term):
+    df = pd.DataFrame(comparison_terms, columns=["Term", "Tag", "conceptId"])
+    return gen_sim(query=term, df=df)
 
-    pass
+def gen_sym_sim(comparison_terms, term):
+    df = pd.DataFrame(comparison_terms, columns=["Term"])
+    return gen_sim(query=term, df=df)
