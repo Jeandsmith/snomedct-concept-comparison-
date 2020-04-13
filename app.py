@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-import itertools as it
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import db_requests as dbreq
-from time import sleep
-from flask_script import Server, Manager
 import gens
-
-app = Flask(__name__, static_folder='public/')
+static_url_path=''
+app = Flask(__name__)
 
 # Handle home page
 @app.route('/')

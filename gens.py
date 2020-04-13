@@ -1,4 +1,3 @@
-from gensim.models import LsiModel
 from gensim.utils import simple_preprocess
 from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
