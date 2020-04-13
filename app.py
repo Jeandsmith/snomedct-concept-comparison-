@@ -35,3 +35,6 @@ def descriptions():
     ans = dbreq.get_alt_terms(conceptId)
     res = gens.gen_sym_sim(ans, query)
     return jsonify(res)
+
+if __name__ == '__main__':
+    app.run()
