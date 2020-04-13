@@ -1,5 +1,4 @@
 flask
-pandas
 gensim
-numpy
+pandas
 psycopg2
