@@ -1,7 +1,7 @@
 from gensim.utils import simple_preprocess
 from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
-from gensim.models import LsiModel
+from gensim.models import TfidfModel
 import pandas as pd
 # import logging
 
@@ -10,7 +10,7 @@ import pandas as pd
 
 res_path = 'resources/'
 dictionary = Dictionary.load(f'{res_path}dictionary.dict')
-lsi = LsiModel.load(f'{res_path}lsi_model.mm')
+tfidf = TfidfModel.load('resources/tfidf/tfid.mm')
 
 def gen_query_term_sim(comparison_terms, term):
     df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Tag"])
@@ -34,12 +34,12 @@ def gen_sim(query, df):
     # Generate the sim matrix against corpus using already embedded words
     # Also, Similarity is scaleable
     global dictionary
-    global lsi
-    index = Similarity(output_prefix=None, corpus=lsi[bow_corpus],
+    global tfidf
+    index = Similarity(output_prefix=None, corpus=tfidf[bow_corpus],
                        num_features=len(dictionary))
 
     # Conver query to a corpus
-    q = lsi[dictionary.doc2bow(simple_preprocess(query), allow_update=True)]
+    q = tfidf[dictionary.doc2bow(simple_preprocess(query))]
 
     # Get the similarities
     try:
