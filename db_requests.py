@@ -12,6 +12,16 @@ def filtered_terms(tag, query):
     # print(res)
     return res
 
+def ts_query(query):
+    """
+        Preprocess the query
+    """
+
+    # Place an & token for indexing queries
+    if ' ' in query and not query.endswith(' '):
+        return query.replace(' ', ' & ')
+    else:
+        return query
 
 # Get the result of a query
 def get_terms(q, *argv):
@@ -27,22 +37,23 @@ def get_terms(q, *argv):
     for arg in argv:
         tt = arg
 
-    # Place an & token for indexing queries
-    if ' ' in q and not q.endswith(' '):
-        t = q.replace(' ', ' & ')
-    else:
-        t = q
-        # print(t)
+    t = ts_query(q)
 
     #   Postgresql handles indexing and queries
     # conceptId
     if not tt:
         query = '''
-            SELECT DISTINCT vs.search_term, tag, vs.conceptId
-            FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
+            SELECT DISTINCT c.id, d.term, tag
+            FROM 
+                sct2_concept AS c, 
+                sct2_description AS d,
+                sct2_sem_tag AS st, 
+                to_tsquery(%(search)s) AS q
             WHERE 
-	            idx_term @@ q AND
-	            st.conceptId = vs.conceptId
+                st.id = d.id AND
+                c.id = d.conceptId AND
+                d.term_ts_idx @@ q AND 
+                c.active = '1';
         '''
 
         cursor.execute(query, {'search': t})
@@ -55,13 +66,21 @@ def get_terms(q, *argv):
             tt = "0"
 
         query = '''
-            SELECT DISTINCT search_term, tag, vs.conceptId
-            FROM sct2_v_searchable AS vs, to_tsquery(%(search)s) as q, sct2_tag_s AS st
+            SELECT DISTINCT c.id, d.term, tag
+            FROM 
+                sct2_concept AS c, 
+                sct2_description AS d,
+                sct2_sem_tag AS st, 
+                to_tsquery(%(search)s) AS q
             WHERE 
-	        idx_term @@ q AND
-	        st.conceptId = vs.conceptId AND
-	        st.tag = %(tag)s;
+                st.id = d.id AND
+                c.id = d.conceptId AND
+                d.term_ts_idx @@ q AND 
+                c.active = '1' AND
+	            st.tag_idx @@ to_tsquery(%(tag)s);
             '''
+
+        tt = ts_query(tt)
 
         cursor.execute(query, {'search': t, 'tag': tt})
 
@@ -79,9 +98,14 @@ def get_alt_terms(conceptId):
         return []
 
     query = '''
-        SELECT DISTINCT search_term
-        FROM sct2_v_searchable AS vs
-        WHERE vs.conceptId = %(conceptId)s;
+        SELECT DISTINCT c.id, d.term
+            FROM 
+                sct2_concept AS c, 
+                sct2_description AS d
+            WHERE 
+                c.id = d.conceptId AND
+                c.active = '1' AND 
+                d.conceptId = %(conceptId)s;
     '''
 
     cursor.execute(query, {'conceptId': conceptId})

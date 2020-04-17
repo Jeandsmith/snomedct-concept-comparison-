@@ -1,4 +1,0 @@
-flask
-gensim
-pandas
-psycopg2

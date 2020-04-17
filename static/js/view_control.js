@@ -27,8 +27,8 @@ function newItemView(term, conceptId, sim, id, terms) {
             <br>
             <p>
             ${
-    li
-    }
+              li
+            }
             </p>
           </div>
         </div>
