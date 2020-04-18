@@ -166,3 +166,4 @@ dmypy.json
 *.bin
 *.txt
 resources/
+algo_test/
