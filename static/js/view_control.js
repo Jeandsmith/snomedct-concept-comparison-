@@ -13,22 +13,29 @@ function newItemView(term, conceptId, sim, id, terms) {
 
   var li = '';
   $.map(terms, term => {
-    li += `<span class="tiny material-icons">lens</span> 
-      ${term.Term} | 
-      <span class="tooltipped" data-position="top" data-tooltip="Cosine similarity against the clicked term">${term.Similarities} </span> <br>`;
+    if (term.Typeid === '900000000000003001') {
+      li += ` 
+      <h5 class=""> ${term.Term}  | </h5>
+      <h6 class="flex"> 
+        <span class="tooltipped" data-position="top" data-tooltip="Cosine similarity against the clicked term">
+          ${parseFloat(term.Similarities).toFixed(3)}</span> </h6><br>`;
+    } else {
+      li += `<span class="tiny material-icons">lens</span> 
+      ${term.Term} </span> <br>`;
+    }
   });
 
   var item = ` 
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
           <div class="card-content">
-            <span class="card-title tooltipped" data-position='top' data-tooltip="Cosine similarity of clicked term against the query">${conceptId} | ${term}</span>
-            <p> ${sim}: Against Query</p>
+            <span class="card-title tooltipped" data-position='top' data-tooltip="TFIDF weighted similarity against user query.">${conceptId} | ${term}</span>
+            <p> TFIDF| ${sim}</p>
             <br>
             <p>
             ${
-              li
-            }
+    li
+    }
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import psycopg2 as pg
 # import time
 
 connection = pg.connect("dbname=snomed user=postgres password=root")
+connection.autocommit = False
 cursor = connection.cursor()
 
 # Get filtered terms of a query
@@ -11,6 +12,7 @@ def filtered_terms(tag, query):
     res = get_terms(query, tag)
     # print(res)
     return res
+
 
 def ts_query(query):
     """
@@ -24,6 +26,8 @@ def ts_query(query):
         return query
 
 # Get the result of a query
+
+
 def get_terms(q, *argv):
 
     if not q:
@@ -44,19 +48,23 @@ def get_terms(q, *argv):
     if not tt:
         query = '''
             SELECT DISTINCT c.id, d.term, tag
-            FROM 
-                sct2_concept AS c, 
+            FROM
+                sct2_concept AS c,
                 sct2_description AS d,
-                sct2_sem_tag AS st, 
+                sct2_sem_tag AS st,
                 to_tsquery(%(search)s) AS q
-            WHERE 
+            WHERE
                 st.id = d.id AND
                 c.id = d.conceptId AND
-                d.term_ts_idx @@ q AND 
+                d.term_ts_idx @@ q AND
                 c.active = '1';
         '''
 
-        cursor.execute(query, {'search': t})
+        try:
+            cursor.execute(query, {'search': t})
+        except:
+            connection.rollback()
+            return []
     else:
 
         # Clean white space at both ends of the string
@@ -77,11 +85,10 @@ def get_terms(q, *argv):
                 c.id = d.conceptId AND
                 d.term_ts_idx @@ q AND 
                 c.active = '1' AND
-	            st.tag_idx @@ to_tsquery(%(tag)s);
+                st.tag_idx @@ to_tsquery(%(tag)s);
             '''
 
         tt = ts_query(tt)
-
         cursor.execute(query, {'search': t, 'tag': tt})
 
     # Fetch all results.
@@ -90,15 +97,13 @@ def get_terms(q, *argv):
     # Send them away
     return ans
 
-# Get the term synonyms and fsn
-
 
 def get_alt_terms(conceptId):
     if not conceptId:
         return []
 
     query = '''
-        SELECT DISTINCT c.id, d.term
+        SELECT DISTINCT c.id, d.term, d.typeid
             FROM 
                 sct2_concept AS c, 
                 sct2_description AS d
@@ -111,4 +116,3 @@ def get_alt_terms(conceptId):
     cursor.execute(query, {'conceptId': conceptId})
     ans = cursor.fetchall()
     return ans
-

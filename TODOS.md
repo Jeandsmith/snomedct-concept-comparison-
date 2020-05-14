@@ -1,5 +1,9 @@
-# Project TODOS
+# TODO
 
-## Live search is not doing what is expected:
-
-For some reason, AJAX is not updating the page on key up after a space is introduced to the query
+* Add feature
+* Fine tune the algorithm Comparison
+* Between the 2 clicked concepts.
+* Similarity of query - concept to top
+* Relationship
+* Feedback button
+* Number of feedback.

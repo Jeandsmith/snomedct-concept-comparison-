@@ -3,6 +3,7 @@ from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel, FastText
 import pandas as pd
+# import numpy as np
 # import logging
 
 # logging.basicConfig(
@@ -18,7 +19,7 @@ def gen_query_term_sim(comparison_terms, term):
     return gen_sim(query=term, df=df)
 
 def gen_sym_sim(comparison_terms, term):
-    df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term"])
+    df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Typeid"])
     return fasttext_sim(query=term, df=df)
 
 
@@ -36,7 +37,7 @@ def fasttext_sim(query, df):
 
     print('Returning fast test')
 
-    return df.sort_values(by='Similarities', ascending=False).to_dict('records')
+    return df.sort_values(by='Typeid', ascending=True).to_dict('records')
 
 def gen_sim(query, df):
 

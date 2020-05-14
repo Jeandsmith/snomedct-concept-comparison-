@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Handle home page
 @app.route("/")
 def home():
-    return render_template("template.html")
+    return render_template("home.html")
 
 # Handles user requests
 @app.route("/term-search", methods=["GET", "POST"])
