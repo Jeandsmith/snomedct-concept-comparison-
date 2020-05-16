@@ -29,6 +29,7 @@ function newItemView(term, conceptId, sim, id, terms) {
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
           <div class="card-content">
+            
             <span class="card-title tooltipped" data-position='top' data-tooltip="TFIDF weighted similarity against user query.">${conceptId} | ${term}</span>
             <p> TFIDF| ${sim}</p>
             <br>
@@ -37,14 +38,93 @@ function newItemView(term, conceptId, sim, id, terms) {
     li
     }
             </p>
+
+            <a class="waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback">Feedback</a>
+
           </div>
         </div>
       </div>`;
 
+  // feedBackForm();
+
   $(document).ready(function () {
     $('.tooltipped').tooltip();
-  });
 
+    // Add the button functionality
+    $('.card-button').on('click', function () {
+
+      var $this = $(this);
+
+      if ($this.data('clicked')) {
+        var text = $('textarea').val();
+
+        // Send some data
+        $.post('/feedback', {
+          feedback: text,
+          conceptId: conceptId
+        });
+
+        $this.parent().children('.feedform').remove();
+        $this.data('clicked', false);
+
+      } else {
+
+        // Get some data
+        $.get('/feedback/count', { conceptId: conceptId })
+          .done((data) => {
+            $this.parent().append(`
+              <div class="row feedform">
+                  <form class="col s12 feedback">
+                      <div class="row">
+                          <div class="input-field col s12">
+                          <textarea id="textarea1" class="materialize-textarea"></textarea>
+                          <label for="textarea1">Write Feedback</label>
+                          </div>
+                      </div>
+
+                      <a class="modal-trigger" href="#feedback-modal">
+                        <span class="new badge blue" data-badge-caption="Feedbacks">${data.length}</span></a>
+                  </form>
+              </div>
+          `);
+
+            var table = `<table>
+          <thead>
+            <tr>
+                <th>Name</th>
+                <th>Item Name</th>
+                <th>Item Price</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            ${
+
+              // Set the feedbacks on the modal
+              $.map(data, (item, index) => {
+
+                `<tr>
+                  <td>${item.conceptId}</td>
+                  <td>${item.feedback}</td>
+                  <td>${item.timeStamp}</td>
+                  </tr>`;
+
+              })
+
+              }
+          </tbody >
+        </table > `;
+
+            // Add table to modal
+            $('#feedback-modal .modal-content').append(table);
+
+            $this.data('clicked', true);
+
+          });
+      }
+
+    });
+  });
 
   return item;
 }

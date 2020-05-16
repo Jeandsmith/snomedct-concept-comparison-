@@ -16,7 +16,7 @@ def term_search():
         t1 = request.args.get('search')
         ans = dbreq.get_terms(t1)
         res = gens.gen_query_term_sim(ans, t1)
-        return jsonify(res)
+        return jsonify(res) 
 
 
 @app.route("/filter")
@@ -34,3 +34,17 @@ def descriptions():
     ans = dbreq.get_alt_terms(conceptId)
     res = gens.gen_sym_sim(ans, query)
     return jsonify(res)
+
+@app.route('/feedback', methods=["GET", "POST"])
+def feedback():
+    if request.method == "POST":
+        conceptId = request.form['conceptId']
+        feedback = request.form['feedback']
+        dbreq.postFeedback(feedback, conceptId)
+        return 'success'
+
+@app.route('/feedback/count')
+def feedback_count():
+    conceptId = request.args['conceptId']
+    count = dbreq.feedbackCount(conceptId)
+    return jsonify(count)

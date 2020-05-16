@@ -7,3 +7,9 @@
 * Relationship
 * Feedback button
 * Number of feedback.
+* Fine tune the full text search dictionary to include heartburn
+
+# Critical
+
+* The form persists when the concept is changed while the form is active.
+    Has to be deleted when the concept changes.

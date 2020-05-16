@@ -35,8 +35,6 @@ def fasttext_sim(query, df):
     (h, w) = df.shape
     df.insert(loc=w, column='Similarities', value=sims)
 
-    print('Returning fast test')
-
     return df.sort_values(by='Typeid', ascending=True).to_dict('records')
 
 def gen_sim(query, df):

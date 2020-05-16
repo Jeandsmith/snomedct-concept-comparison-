@@ -56,7 +56,8 @@ def get_terms(q, *argv):
             WHERE
                 st.id = d.id AND
                 c.id = d.conceptId AND
-                d.term_ts_idx @@ q AND
+                d.concept @@ q AND
+                d.active = '1' AND
                 c.active = '1';
         '''
 
@@ -83,8 +84,9 @@ def get_terms(q, *argv):
             WHERE 
                 st.id = d.id AND
                 c.id = d.conceptId AND
-                d.term_ts_idx @@ q AND 
+                d.concept @@ q AND 
                 c.active = '1' AND
+                d.active = '1' AND
                 st.tag_idx @@ to_tsquery(%(tag)s);
             '''
 
@@ -110,9 +112,28 @@ def get_alt_terms(conceptId):
             WHERE 
                 c.id = d.conceptId AND
                 c.active = '1' AND 
+                d.active = '1' AND
                 d.conceptId = %(conceptId)s;
     '''
 
     cursor.execute(query, {'conceptId': conceptId})
     ans = cursor.fetchall()
     return ans
+
+
+# Post some feedback on the terms
+def postFeedback(feedback, conceptid):
+    query = """
+    
+    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_DATE);
+    
+    """
+
+    cursor.execute(query, {'feedback': feedback, 'conceptId': conceptid})
+    connection.commit()
+
+# Get the count of user feedback for a concept
+def feedbackCount (conceptId):
+    cursor.execute('SELECT * FROM user_feedback WHERE conceptId = %(conceptId)s', {'conceptId': conceptId})
+    count = cursor.fetchall()
+    return count
