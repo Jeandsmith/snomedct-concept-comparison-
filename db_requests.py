@@ -125,7 +125,7 @@ def get_alt_terms(conceptId):
 def postFeedback(feedback, conceptid):
     query = """
     
-    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_DATE);
+    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP);
     
     """
 

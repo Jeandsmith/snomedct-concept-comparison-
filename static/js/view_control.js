@@ -8,8 +8,7 @@ var newestItemId = 0;
 
 function newItemView(term, conceptId, sim, id, terms) {
 
-  // TODO: Organize the terms in the list
-  // TODO: Fix order of list with the fsn on top
+  $('.card-button').parent().children('.feedform').remove();
 
   var li = '';
   $.map(terms, term => {
@@ -55,16 +54,25 @@ function newItemView(term, conceptId, sim, id, terms) {
 
       var $this = $(this);
 
+      // Remove form if there is any
+
       if ($this.data('clicked')) {
+
         var text = $('textarea').val();
-
-        // Send some data
-        $.post('/feedback', {
-          feedback: text,
-          conceptId: conceptId
-        });
-
         $this.parent().children('.feedform').remove();
+
+
+        if (text !== '') {
+
+          // Send some data
+          $.post('/feedback', {
+            feedback: text,
+            conceptId: conceptId
+          });
+
+          console.log("Posted");
+        }
+
         $this.data('clicked', false);
 
       } else {
@@ -88,34 +96,41 @@ function newItemView(term, conceptId, sim, id, terms) {
               </div>
           `);
 
+
+            var rows = '';
+
+            // Set the feedbacks on the modal
+            $.map(data, (item, index) => {
+
+              rows += `<tr>
+              <td>${item[0]}</td>
+              <td>${item[1]}</td>
+              <td>${item[2]}</td>
+              </tr>`;
+
+            });
+
             var table = `<table>
           <thead>
             <tr>
-                <th>Name</th>
-                <th>Item Name</th>
-                <th>Item Price</th>
+                <th>ConceptId</th>
+                <th>Message</th>
+                <th>Date</th>
             </tr>
           </thead>
   
           <tbody>
             ${
 
-              // Set the feedbacks on the modal
-              $.map(data, (item, index) => {
-
-                `<tr>
-                  <td>${item.conceptId}</td>
-                  <td>${item.feedback}</td>
-                  <td>${item.timeStamp}</td>
-                  </tr>`;
-
-              })
+              rows
 
               }
           </tbody >
         </table > `;
 
+
             // Add table to modal
+            $('#feedback-modal .modal-content').children().remove();
             $('#feedback-modal .modal-content').append(table);
 
             $this.data('clicked', true);
