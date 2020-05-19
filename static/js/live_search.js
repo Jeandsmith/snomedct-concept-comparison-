@@ -74,10 +74,11 @@ $(() => {
             var html = `
             <a href="#!" class="collection-item" truncate>
               <p class="content">
-              <span class="term" data-conceptid=${term.conceptId}>
-                ${term.Term} </span> <br>
-              <span class="similarity"> Cosine Similarity: ${term.Similarities}
-              </span></p>
+                <span class="term" data-conceptid=${term.conceptId}>
+                  ${term.Term} </span> <br>
+                <span class="similarity"> Cosine Similarity: ${term.Similarities}
+                </span>
+              </p>
             </a>
             
             `;

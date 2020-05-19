@@ -14,8 +14,8 @@ body {
   height: 100%;
 }
 
-html {
-  font-size: 16px;
+h4 {
+  font-size: 18px;
 }
 
 .theme {
@@ -23,34 +23,23 @@ html {
   @extend .white-text;
 }
 
-// table tbody,
-// table thead {
-//   display: block;
-// }
+.collection-item {
+  @extend .black-text;
+}
 
-// table tbody {
-//   overflow: auto;
-//   height: 400px;
-//   // width: 400px;
-// }
-
-// table th:nth-child(1),
-// td:nth-child(1) {
-//   min-width: 400px;
-//   max-width: 400px;
-// }
-
-// table th:nth-child(2),
-// td:nth-child(2) {
-//   min-width: 800px;
-//   max-width: 800px;
-// }
+.active {
+  @extend .theme;
+}
 
 div .card-button{
   margin-top: 40px;
   margin-bottom: 20px;
 }
 
+.input-field input[type=search] + label {
+  @extend .green-text;
+}
+
 .input-field textarea[type=text] + label {
-  color: white;
+  @extend .white-text
 }
