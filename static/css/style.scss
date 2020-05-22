@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 @import 'sass/materialize.scss';
 
-$fam: 'Open Sans', sans-serif;
-$font-stack: 'Open Sans';
+$fam: 'Roboto', sans-serif;
+$font-stack: 'Roboto';
 
 $primary-color: #333;
 
@@ -10,12 +10,7 @@ body {
   font-family: $fam;
   font: 100% $font-stack;
   color: $primary-color;
-  //   background: firebrick;
   height: 100%;
-}
-
-h4 {
-  font-size: 18px;
 }
 
 .theme {
@@ -36,10 +31,14 @@ div .card-button{
   margin-bottom: 20px;
 }
 
-.input-field input[type=search] + label {
-  @extend .green-text;
-}
+// .input-field input[type=search] {
+//   @extend .white-text;
+// }
 
-.input-field textarea[type=text] + label {
-  @extend .white-text
+// .input-field input[type=search]:focus + label {
+//   @extend .black-text;
+// }
+
+.input-field textarea {
+  @extend .white-text;
 }

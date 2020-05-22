@@ -2,16 +2,15 @@
 
 * Fine tune the algorithm Comparison
 * Fine tune the full text search dictionary to include heartburn
-
+* Input field text bar to white text
+* Page device resolution fix: App not responsive
 
 # Doing
 * Generate sim between the 2 clicked concepts (concept - concept).
 * Generate concept Relationship
 * Similarity of query - concept to top
 
-
 # Critical
-
 
 # Done
 * Make list item appear a selected (Still have to change the color tho) 

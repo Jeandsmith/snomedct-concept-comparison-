@@ -14,30 +14,13 @@ dictionary = Dictionary.load(f'{res_path}dictionary.dict')
 tfidf = TfidfModel.load('resources/tfidf/tfid.mm')
 ft = FastText.load('resources/ft_model.mm')
 
+
 def gen_query_term_sim(comparison_terms, term):
     df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Tag"])
-    return gen_sim(query=term, df=df)
-
-def gen_sym_sim(comparison_terms, term):
-    df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Typeid"])
-    return fasttext_sim(query=term, df=df)
+    return tfidf_sim(concept_1=term, df=df)
 
 
-def fasttext_sim(query, df):
-    df["Term"].dropna(inplace=True)
-    split_docs = df['Term'].apply(simple_preprocess)
-    split_q = simple_preprocess(query)
-
-    sims = []
-    for doc in split_docs:
-        sims.append(ft.n_similarity(doc, split_q))
-
-    (h, w) = df.shape
-    df.insert(loc=w, column='Similarities', value=sims)
-
-    return df.sort_values(by='Typeid', ascending=True).to_dict('records')
-
-def gen_sim(query, df):
+def tfidf_sim(concept_1, df):
 
     # Make copy of terms to work with after dropping empty values
     df["Term"].dropna(inplace=True)
@@ -55,8 +38,8 @@ def gen_sim(query, df):
     index = Similarity(output_prefix=None, corpus=tfidf[bow_corpus],
                        num_features=len(dictionary))
 
-    # Conver query to a corpus
-    q = tfidf[dictionary.doc2bow(simple_preprocess(query))]
+    # Conver concept_1 to a corpus
+    q = tfidf[dictionary.doc2bow(simple_preprocess(concept_1))]
 
     # Get the similarities
     try:
@@ -69,7 +52,7 @@ def gen_sim(query, df):
         (h, w) = df.shape
         df.insert(loc=w, value=sims, column="Similarities")
 
-        # Sort the values by similarity to query descending
+        # Sort the values by similarity to concept_1 descending
         # df.sort_values(by=['Term', "Similarities"], ascending=False, inplace=True)
         # # Export as records ([{Term, ID, Sim}, {Term, ID, Sim}])
         res = df.to_dict('records')
@@ -80,3 +63,12 @@ def gen_sim(query, df):
         return []
 
 
+def fasttext_sim(concept_1, concept_2):
+    c1 = simple_preprocess(concept_1)
+    c2 = simple_preprocess(concept_2)
+    sims = ft.n_similarity(c1, c2)
+
+    return sims
+
+def compare_concepts(concept_1, concept_2):
+    return fasttext_sim(concept_1, concept_2)

@@ -6,34 +6,39 @@
 var newestItemId = 0;
 
 
-function newItemView(term, conceptId, sim, id, terms) {
+function newItemView(term, conceptId, id, terms) {
 
   var li = '';
+  var lo = '';
   $.map(terms, term => {
+
+    // First style the fsn concept 
     if (term.Typeid === '900000000000003001') {
-      li += ` 
-      <h4 class=""> ${term.Term}  | </h5>
-      <h5 class="flex"> 
-        <span class="tooltipped" data-position="top" data-tooltip="Cosine similarity against the clicked term">
-          ${parseFloat(term.Similarities).toFixed(3)}</span> </h6><br>`;
+
+      lo += ` 
+      <h6> ${term.Term}</h6> <br> `;
+      // ${parseFloat(term.Similarities).toFixed(3)} </h6>
+
     } else {
-      li += `<span class="tiny material-icons">lens</span> 
-      ${term.Term} </span> <br>`;
+
+      li += `<span class="tiny material-icons">lens</span> ${term.Term} </span> <br>`;
+
     }
   });
 
+  // tooltipped data-position='top' data-tooltip="TFIDF weighted similarity against user query."
   var item = ` 
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
           <div class="card-content">
-            
-            <span class="card-title tooltipped" data-position='top' data-tooltip="TFIDF weighted similarity against user query."> <span id="conceptId">${conceptId}</span> | ${term}</span>
-            <p> TFIDF| ${sim}</p>
+            <span class="card-title"> 
+              <span id="conceptId">${conceptId}</span> | 
+              <span class="card-concept">${term}</span>
+            </span>
             <br>
-            <p>
-            ${
-    li
-    }
+            <p class="flex">
+              ${lo}
+              ${li}
             </p>
 
             <a class="waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback">Feedback</a>
@@ -42,7 +47,8 @@ function newItemView(term, conceptId, sim, id, terms) {
         </div>
       </div>`;
 
-    $('.card-button').unbind();
+
+  $('.card-button').unbind();
 
   return item;
 }
@@ -57,7 +63,6 @@ function loadItemClickEvent() {
     var viewSection = $("div#view");
 
     term = thisItem.children().children("span.term").text();
-    sim = thisItem.children().children("span.similarity").text();
     conceptId = thisItem.children().children("span.term").attr('data-conceptid');
     // $('div.feedform').remove();
 
@@ -75,7 +80,7 @@ function loadItemClickEvent() {
         if (!viewSection.children().length) {
 
           newestItemId = 0;
-          viewSection.append(newItemView(term, conceptId, sim, newestItemId, terms));
+          viewSection.append(newItemView(term, conceptId, newestItemId, terms));
           thisItem.attr('id', newestItemId.toString());
           $(this).addClass('active');
           thisItem.data('onScreen', true);
@@ -94,17 +99,32 @@ function loadItemClickEvent() {
             // viewSection.children(`div#${newestItemId.toString()}`).children('div.feedform').remove();
             // $('.card-button').removeData();
 
-            viewSection.children(`div#${newestItemId.toString()}`).remove();
-
             var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
+
+            viewSection.children(`div#${newestItemId.toString()}`).remove();
             prevItem.removeClass("active");
             prevItem.removeAttr('id');
             prevItem.data('onScreen', false);
+
           }
 
-          viewSection.append(newItemView(term, conceptId, sim, newestItemId, terms));
-          thisItem.addClass("active");
+          var otherCardId = Math.abs(newestItemId - 1);
+          var otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
 
+          // Add the similarity to the sim view
+          $.post('/description/card-concept-comparison', {
+            'concept_1': otherCardConcept, 'concept_2': term
+          })
+            .done(sim => {
+
+              $('#concept-cosine-sim').text(sim);
+
+            });
+
+          console.log(`${otherCardId}: ${otherCardConcept}`);
+
+          viewSection.append(newItemView(term, conceptId, newestItemId, terms));
+          thisItem.addClass("active");
 
           // Association of this item to the view item
           thisItem.attr('id', newestItemId.toString());
@@ -125,13 +145,15 @@ function loadItemClickEvent() {
 
           thisItem.data('onScreen', false);
           thisItem.removeAttr('id');
+          $('#concept-cosine-sim').text(0);
         }
 
-        $('.tooltipped').tooltip();
         addButtonClickEven();
       }
     });
   });
+
+  $('.tooltipped').tooltip();
 }
 
 function addButtonClickEven() {
@@ -226,4 +248,6 @@ function addButtonClickEven() {
     }
   });
 
+
+  $('.tooltipped').tooltip();
 }

@@ -16,7 +16,7 @@ def term_search():
         t1 = request.args.get('search')
         ans = dbreq.get_terms(t1)
         res = gens.gen_query_term_sim(ans, t1)
-        return jsonify(res) 
+        return jsonify(res)
 
 
 @app.route("/filter")
@@ -32,8 +32,15 @@ def descriptions():
     conceptId = request.args.get('id')
     query = request.args.get('query')
     ans = dbreq.get_alt_terms(conceptId)
-    res = gens.gen_sym_sim(ans, query)
-    return jsonify(res)
+    # res = gens.gen_sym_sim(ans, query)
+
+    import pandas as pd
+
+    df = pd.DataFrame(ans, columns=["conceptId", "Term", "Typeid"])
+    ans = df.to_dict('records')
+
+    return jsonify(ans)
+
 
 @app.route('/feedback', methods=["GET", "POST"])
 def feedback():
@@ -43,8 +50,19 @@ def feedback():
         dbreq.postFeedback(feedback, conceptId)
         return 'success'
 
+
 @app.route('/feedback/count')
 def feedback_count():
     conceptId = request.args['conceptId']
     count = dbreq.feedbackCount(conceptId)
     return jsonify(count)
+
+
+@app.route('/description/card-concept-comparison', methods=['POST', 'GET'])
+def card_concept_comparison():
+    if request.method == "POST":
+        c1 = request.form.get('concept_1')
+        c2 = request.form.get('concept_2')
+        sim = gens.compare_concepts(c1, c2)
+        # return jsonify(sim)
+        return str(sim)

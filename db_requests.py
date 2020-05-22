@@ -47,18 +47,21 @@ def get_terms(q, *argv):
     # conceptId
     if not tt:
         query = '''
-            SELECT DISTINCT c.id, d.term, tag
+            SELECT DISTINCT d.conceptId, d.term, tag
             FROM
                 sct2_concept AS c,
                 sct2_description AS d,
+                sct2_relationship as r,
                 sct2_sem_tag AS st,
                 to_tsquery(%(search)s) AS q
             WHERE
                 st.id = d.id AND
                 c.id = d.conceptId AND
-                d.concept @@ q AND
+                d.conceptId = r.sourceId AND
+                c.active = '1' AND
                 d.active = '1' AND
-                c.active = '1';
+                r.active = '1' AND
+                concept @@ q;
         '''
 
         try:
@@ -75,18 +78,21 @@ def get_terms(q, *argv):
             tt = "0"
 
         query = '''
-            SELECT DISTINCT c.id, d.term, tag
+            SELECT DISTINCT d.conceptId, d.term, tag
             FROM 
                 sct2_concept AS c, 
                 sct2_description AS d,
+                sct2_relationship AS r,
                 sct2_sem_tag AS st, 
                 to_tsquery(%(search)s) AS q
             WHERE 
-                st.id = d.id AND
-                c.id = d.conceptId AND
-                d.concept @@ q AND 
-                c.active = '1' AND
-                d.active = '1' AND
+                st.id = d.id                AND
+                c.id = d.conceptId          AND
+                d.concept @@ q              AND 
+                c.active = '1'              AND
+                d.active = '1'              AND
+                r.active = '1'              AND
+                r.sourceId = d.conceptId    AND 
                 st.tag_idx @@ to_tsquery(%(tag)s);
             '''
 
