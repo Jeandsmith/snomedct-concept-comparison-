@@ -30,7 +30,6 @@ def filter():
 @app.route("/descriptions")
 def descriptions():
     conceptId = request.args.get('id')
-    query = request.args.get('query')
     ans = dbreq.get_alt_terms(conceptId)
     # res = gens.gen_sym_sim(ans, query)
 
@@ -64,5 +63,4 @@ def card_concept_comparison():
         c1 = request.form.get('concept_1')
         c2 = request.form.get('concept_2')
         sim = gens.compare_concepts(c1, c2)
-        # return jsonify(sim)
         return str(sim)

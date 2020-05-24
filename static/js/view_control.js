@@ -1,33 +1,16 @@
 // Begin an ID counter -- to keep track of current view ID
 // this -- refers to the thing I am clicking
 
-// var prevClickedItems = [];
-// var thisItemId = { ID: undefined, Term: undefined }; // Just for init
+// let prevClickedItems = [];
+// let thisItemId = { ID: undefined, Term: undefined }; // Just for init
 var newestItemId = 0;
 
 
-function newItemView(term, conceptId, id, terms) {
+function newItemView(term, conceptId, id) {
 
-  var li = '';
-  var lo = '';
-  $.map(terms, term => {
 
-    // First style the fsn concept 
-    if (term.Typeid === '900000000000003001') {
 
-      lo += ` 
-      <h6> ${term.Term}</h6> <br> `;
-      // ${parseFloat(term.Similarities).toFixed(3)} </h6>
-
-    } else {
-
-      li += `<span class="tiny material-icons">lens</span> ${term.Term} </span> <br>`;
-
-    }
-  });
-
-  // tooltipped data-position='top' data-tooltip="TFIDF weighted similarity against user query."
-  var item = ` 
+  let item = ` 
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
           <div class="card-content">
@@ -36,9 +19,11 @@ function newItemView(term, conceptId, id, terms) {
               <span class="card-concept">${term}</span>
             </span>
             <br>
-            <p class="flex">
-              ${lo}
-              ${li}
+            <p class="flex card-syn">
+              
+              <span class="fns"></span>
+              <span class="syn"></span>
+
             </p>
 
             <a class="waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback">Feedback</a>
@@ -51,124 +36,128 @@ function newItemView(term, conceptId, id, terms) {
   $('.card-button').unbind();
 
   return item;
+
+}
+
+function ajaxConceptSynRequest(conceptId) {
+  $.ajax({
+    url: '/descriptions',
+    method: 'get',
+    data: { id: conceptId },
+    contentType: 'application/json',
+    cache: false,
+    async: true,
+    success: terms => {
+
+      let li = '';
+      let lo = '';
+
+      $.map(terms, term => {
+
+        if (term.Typeid === '900000000000003001') lo += ` <h6> ${term.Term}</h6> <br> `;
+        else li += `<span class="tiny material-icons">lens</span> ${term.Term} </span> <br>`;
+
+      });
+
+      let currentCardView = $(`div#view div#${newestItemId} p.card-syn`);
+
+      currentCardView.children('.fns').append(`${lo}`);
+      currentCardView.children('.syn').append(`${li}`);
+
+    }
+  });
 }
 
 function loadItemClickEvent() {
 
-  // Select all collection items and assign a click event
   $("a.collection-item").on("click", function () {
 
-    var thisItem = $(this);
-    var term;
-    var viewSection = $("div#view");
+    let thisItem = $(this);
+    let term;
+    let viewSection = $("div#view");
+    let pageRef = thisItem.parent().attr('id');
 
     term = thisItem.children().children("span.term").text();
     conceptId = thisItem.children().children("span.term").attr('data-conceptid');
-    // $('div.feedform').remove();
 
-    // Get the synonism
-    $.ajax({
-      url: '/descriptions',
-      method: 'get',
-      data: { id: conceptId, query: term },
-      contentType: 'application/json',
-      cache: false,
-      async: true,
-      success: terms => {
+    if (!viewSection.children().length) {
 
-        // If there is nothing on the screen
-        if (!viewSection.children().length) {
+      ajaxConceptSynRequest(conceptId);
+      newestItemId = 0;
+      viewSection.append(newItemView(term, conceptId, newestItemId));
+      thisItem.attr('id', newestItemId.toString());
+      thisItem.addClass('active');
+      thisItem.data('onScreen', true);
 
-          newestItemId = 0;
-          viewSection.append(newItemView(term, conceptId, newestItemId, terms));
-          thisItem.attr('id', newestItemId.toString());
-          $(this).addClass('active');
-          thisItem.data('onScreen', true);
+    }
 
-        }
+    else if (!thisItem.data('onScreen') && viewSection.children().length) {
 
-        // If there is a item on the screen and this item is not clicked yet
-        else if (!thisItem.data('onScreen') && viewSection.children().length) {
+      ajaxConceptSynRequest(conceptId);
+      newestItemId = (newestItemId + 1) % 2;
 
-          // Gen the id of this item
-          newestItemId = (newestItemId + 1) % 2;
+      if (viewSection.children(`div#${newestItemId.toString()}`).length) {
 
-          // If the view section has something with this ID
-          if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+        // Remove here
+        let prevItem = $('span#collection-item-section')
+          .children(`span#${pageRef}`).children(`a#${newestItemId.toString()}`);
 
-            // viewSection.children(`div#${newestItemId.toString()}`).children('div.feedform').remove();
-            // $('.card-button').removeData();
+        viewSection.children(`div#${newestItemId.toString()}`).remove();
+        prevItem.removeClass("active");
+        prevItem.removeAttr('id');
+        prevItem.data('onScreen', false);
 
-            var prevItem = $('span#collection-item-section').children(`a#${newestItemId.toString()}`);
-
-            viewSection.children(`div#${newestItemId.toString()}`).remove();
-            prevItem.removeClass("active");
-            prevItem.removeAttr('id');
-            prevItem.data('onScreen', false);
-
-          }
-
-          var otherCardId = Math.abs(newestItemId - 1);
-          var otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
-
-          // Add the similarity to the sim view
-          $.post('/description/card-concept-comparison', {
-            'concept_1': otherCardConcept, 'concept_2': term
-          })
-            .done(sim => {
-
-              $('#concept-cosine-sim').text(sim);
-
-            });
-
-          console.log(`${otherCardId}: ${otherCardConcept}`);
-
-          viewSection.append(newItemView(term, conceptId, newestItemId, terms));
-          thisItem.addClass("active");
-
-          // Association of this item to the view item
-          thisItem.attr('id', newestItemId.toString());
-          thisItem.data('onScreen', true);
-        }
-
-        else if (thisItem.data('onScreen')) {
-
-          var itemId = thisItem.attr(`id`);
-
-          thisItem.removeClass("active");
-          viewSection.children(`div#${itemId.toString()}`).children('a.card-button').remove();
-          viewSection.children(`div#${itemId.toString()}`).remove();
-
-          if (itemId == newestItemId) {
-            newestItemId = (newestItemId + 1) % 2;
-          }
-
-          thisItem.data('onScreen', false);
-          thisItem.removeAttr('id');
-          $('#concept-cosine-sim').text(0);
-        }
-
-        addButtonClickEven();
       }
-    });
+
+      let otherCardId = Math.abs(newestItemId - 1);
+      let otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
+
+      $.post('/description/card-concept-comparison', {
+        'concept_1': otherCardConcept, 'concept_2': term
+      }).done(sim => { $('#concept-cosine-sim').text(sim); });
+
+      viewSection.append(newItemView(term, conceptId, newestItemId));
+      thisItem.addClass("active");
+
+      thisItem.attr('id', newestItemId.toString());
+      thisItem.data('onScreen', true);
+    }
+
+    else if (thisItem.data('onScreen')) {
+
+      let itemId = thisItem.attr(`id`);
+
+      thisItem.removeClass("active");
+      // viewSection.children(`div#${itemId.toString()}`).children('a.card-button').remove();
+      viewSection.children(`div#${itemId.toString()}`).remove();
+
+      if (itemId == newestItemId) {
+        newestItemId = (newestItemId + 1) % 2;
+      }
+
+      thisItem.data('onScreen', false);
+      thisItem.removeAttr('id');
+      $('#concept-cosine-sim').text(0);
+    }
+
+    addButtonClickEven();
+
+    $('.tooltipped').tooltip();
+
   });
 
-  $('.tooltipped').tooltip();
 }
 
 function addButtonClickEven() {
 
-  // Add the button functionality
   $('.card-button').on('click', function () {
 
-    var $this = $(this);
-    var concept = $this.parent().children('span').children('#conceptId').text();
-    // var thisCardId = $this.parent().parent().parent().attr('id');
+    let $this = $(this);
+    let concept = $this.parent().children('span').children('#conceptId').text();
 
-    // Remove form if there is an
     if ($this.data('clicked')) {
 
-      var text = $this.parent().children('div.feedform').children('form.feedback')
+      let text = $this.parent().children('div.feedform').children('form.feedback')
         .children('div.row').children('div.input-field').children('textarea#textarea1').val();
 
       if (text !== '') {
@@ -186,12 +175,10 @@ function addButtonClickEven() {
 
     } else {
 
-      // Get some data
       $.get('/feedback/count', { conceptId: concept }).done(data => {
 
-        var rows = '';
+        let rows = '';
 
-        // Set the feedbacks on the modal
         $.map(data, (item, index) => {
 
           rows += `<tr>
@@ -202,10 +189,8 @@ function addButtonClickEven() {
 
         });
 
-        // Append the length of data to 
         $this.parent().children('div.feedform').children('form.feedback').children('a').children('span').append(`${data.length}`);
 
-        // Append the table row
         $('#feedback-modal .modal-content table tbody').append(rows);
 
       });
@@ -225,7 +210,7 @@ function addButtonClickEven() {
           </form>
       </div>`);
 
-      var table = `<table>
+      let table = `<table>
       <thead>
         <tr>
             <th>ConceptId</th>
@@ -237,14 +222,11 @@ function addButtonClickEven() {
       </tbody >
       </table >`;
 
-
-      // Add table to modal
       $('#feedback-modal .modal-content').children().remove();
       $('#feedback-modal .modal-content').append(table);
+      $('.modal').modal();
 
       $this.data('clicked', true);
-      console.log('Added form');
-
     }
   });
 
