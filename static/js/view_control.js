@@ -8,8 +8,6 @@ var newestItemId = 0;
 
 function newItemView(term, conceptId, id) {
 
-
-
   let item = ` 
       <div class="col s6" id="${id.toString()}">
         <div class="card hoverable theme">
@@ -31,7 +29,6 @@ function newItemView(term, conceptId, id) {
           </div>
         </div>
       </div>`;
-
 
   $('.card-button').unbind();
 

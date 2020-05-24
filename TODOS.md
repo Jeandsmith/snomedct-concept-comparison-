@@ -1,13 +1,13 @@
 # TODO
 
-* Add the current selected if there is any view on the screen when the
-    user changes filter.
 * Fine tune the algorithm Comparison
 * Fine tune the full text search dictionary to include heartburn
 * Page device resolution fix: App not responsive
 
 # Doing
 * Generate concept Relationship
+* Add the current selected if there is any view on the screen when the
+    user changes filter.
 
 # Critical
 
