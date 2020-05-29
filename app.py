@@ -31,14 +31,14 @@ def filter():
 def descriptions():
     conceptId = request.args.get('id')
     ans = dbreq.get_alt_terms(conceptId)
-    # res = gens.gen_sym_sim(ans, query)
+    rels = dbreq.get_concept_rels(conceptId)
 
     import pandas as pd
 
     df = pd.DataFrame(ans, columns=["conceptId", "Term", "Typeid"])
     ans = df.to_dict('records')
 
-    return jsonify(ans)
+    return jsonify(search_result=ans, attr_rels=rels)
 
 
 @app.route('/feedback', methods=["GET", "POST"])

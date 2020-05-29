@@ -1,4 +1,6 @@
 import psycopg2 as pg
+from pandas import DataFrame as df
+import re
 # import time
 
 connection = pg.connect("dbname=snomed user=postgres password=root")
@@ -139,7 +141,37 @@ def postFeedback(feedback, conceptid):
     connection.commit()
 
 # Get the count of user feedback for a concept
-def feedbackCount (conceptId):
-    cursor.execute('SELECT * FROM user_feedback WHERE conceptId = %(conceptId)s', {'conceptId': conceptId})
+
+
+def feedbackCount(conceptId):
+    cursor.execute(
+        'SELECT * FROM user_feedback WHERE conceptId = %(conceptId)s', {'conceptId': conceptId})
     count = cursor.fetchall()
     return count
+
+# Get concept relationships
+
+
+def get_concept_rels(conceptId):
+    query = '''
+        SELECT * FROM sct2_concept_attr_rels
+	    WHERE conceptId = %(conceptId)s;'''
+    cursor.execute(query, {'conceptId': conceptId})
+    data = cursor.fetchall()
+    c_data = clean_text(data)
+    return c_data
+
+
+def clean_text(data):
+    d = df(data, columns=['conceptId', 'typeTerm', 'destTerm'])
+    res = list()
+
+    for row in d.values:
+        typeT = re.sub(r'\s\((\w|\W)*\)', '', row[1], flags=re.IGNORECASE)
+        desT = re.sub(r'\s\((\w|\W)*\)', '', row[2], flags=re.IGNORECASE)
+        res.append([row[0], typeT, desT])
+
+    df_res = df(res, columns=['conceptId', 'typeTerm', 'destTerm'])
+    df_res.drop_duplicates(inplace=True)
+    fn = df_res.to_dict('records')
+    return fn

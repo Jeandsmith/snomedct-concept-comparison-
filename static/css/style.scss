@@ -27,18 +27,17 @@ body {
 }
 
 div .card-button{
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
-
-// .input-field input[type=search] {
-//   @extend .white-text;
-// }
-
-// .input-field input[type=search]:focus + label {
-//   @extend .black-text;
-// }
 
 .input-field textarea {
   @extend .white-text;
+}
+
+div.attr-card {
+  margin-top: 20px; 
+}
+
+span.attr {
+  font-size: small;
 }

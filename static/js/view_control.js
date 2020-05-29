@@ -17,12 +17,26 @@ function newItemView(term, conceptId, id) {
               <span class="card-concept">${term}</span>
             </span>
             <br>
+
             <p class="flex card-syn">
               
               <span class="fns"></span>
               <span class="syn"></span>
 
             </p>
+
+            <div class="row attr-card tooltipped" data-position="top" data-tooltip="Concept Attributes>
+              <div class="col s12 m12">
+                <div class="card blue darken-3">
+                  <div class="card-content white-text">
+                    <span id="rels"> 
+                    
+                    
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <a class="waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback">Feedback</a>
 
@@ -46,20 +60,56 @@ function ajaxConceptSynRequest(conceptId) {
     async: true,
     success: terms => {
 
+      let attrRels = terms.attr_rels;
+      let termsRes = terms.search_result;
+      let r = '';
       let li = '';
       let lo = '';
 
-      $.map(terms, term => {
+      console.log(attrRels);
+
+      $.map(termsRes, term => {
 
         if (term.Typeid === '900000000000003001') lo += ` <h6> ${term.Term}</h6> <br> `;
         else li += `<span class="tiny material-icons">lens</span> ${term.Term} </span> <br>`;
 
       });
 
-      let currentCardView = $(`div#view div#${newestItemId} p.card-syn`);
+      if (attrRels.length) {
+        $.map(attrRels, term => {
 
-      currentCardView.children('.fns').append(`${lo}`);
-      currentCardView.children('.syn').append(`${li}`);
+          r += `
+          
+            <span>${term.typeTerm} <i class="tiny material-icons">chevron_right</i> ${term.destTerm}</span></br>
+          
+          `;
+
+        });
+      } else {
+
+        r = `
+          
+          <span>No Attributes</span> </br>
+      
+        `;
+
+      }
+
+      let currentCardSyn = $(`div#view div#${newestItemId} p.card-syn`);
+
+      currentCardSyn
+        .children('.fns')
+        .append(`${lo}`);
+      currentCardSyn
+        .children('.syn')
+        .append(`${li}`);
+
+      let currentCardRels = $(`div#view div#${newestItemId} div.attr-card`);
+      currentCardRels
+        .children()
+        .children()
+        .children()
+        .append(`${r}`);
 
     }
   });
@@ -85,6 +135,7 @@ function loadItemClickEvent() {
       thisItem.attr('id', newestItemId.toString());
       thisItem.addClass('active');
       thisItem.data('onScreen', true);
+      thisItem.data('viewId', newestItemId);
 
     }
 
@@ -96,13 +147,15 @@ function loadItemClickEvent() {
       if (viewSection.children(`div#${newestItemId.toString()}`).length) {
 
         // Remove here
+        // `span#${pageRef}`
         let prevItem = $('span#collection-item-section')
-          .children(`span#${pageRef}`).children(`a#${newestItemId.toString()}`);
+          .children().children(`a#${newestItemId.toString()}`);
 
         viewSection.children(`div#${newestItemId.toString()}`).remove();
         prevItem.removeClass("active");
         prevItem.removeAttr('id');
         prevItem.data('onScreen', false);
+        prevItem.removeData('viewId');
 
       }
 

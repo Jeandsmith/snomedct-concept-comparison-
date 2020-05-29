@@ -2,16 +2,16 @@
 
 * Fine tune the algorithm Comparison
 * Fine tune the full text search dictionary to include heartburn
-* Page device resolution fix: App not responsive
 
 # Doing
+* Page device resolution fix: App not responsive
 * Generate concept Relationship
-* Add the current selected if there is any view on the screen when the
-    user changes filter.
 
 # Critical
 
 # Done
+* Add the current selected if there is any view on the screen when the
+    user changes filter.
 * Similarity of query - concept to top
 * Now the items collection not behave as expected
 * Generate sim between the 2 clicked concepts (concept - concept).

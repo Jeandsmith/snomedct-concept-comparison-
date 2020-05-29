@@ -64,6 +64,7 @@ $(() => {
 
           loadRadioClicks();
           mapResultItems(gatheredTerms, progress);
+          
         }
       });
     }
