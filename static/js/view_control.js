@@ -25,7 +25,7 @@ function newItemView(term, conceptId, id) {
 
             </p>
 
-            <div class="row attr-card tooltipped" data-position="top" data-tooltip="Concept Attributes>
+            <div class="row attr-card tooltipped" data-position="top" data-tooltip="Concept Attributes">
               <div class="col s12 m12">
                 <div class="card blue darken-3">
                   <div class="card-content white-text">
@@ -65,8 +65,6 @@ function ajaxConceptSynRequest(conceptId) {
       let r = '';
       let li = '';
       let lo = '';
-
-      console.log(attrRels);
 
       $.map(termsRes, term => {
 
@@ -178,7 +176,6 @@ function loadItemClickEvent() {
       let itemId = thisItem.attr(`id`);
 
       thisItem.removeClass("active");
-      // viewSection.children(`div#${itemId.toString()}`).children('a.card-button').remove();
       viewSection.children(`div#${itemId.toString()}`).remove();
 
       if (itemId == newestItemId) {
@@ -205,10 +202,16 @@ function addButtonClickEven() {
     let $this = $(this);
     let concept = $this.parent().children('span').children('#conceptId').text();
 
+    console.log(concept);
+
     if ($this.data('clicked')) {
 
-      let text = $this.parent().children('div.feedform').children('form.feedback')
-        .children('div.row').children('div.input-field').children('textarea#textarea1').val();
+      let text = $this.parent()
+        .children('div.feedform')
+        .children('form.feedback')
+        .children('div.row')
+        .children('div.input-field')
+        .children('textarea#textarea1').val();
 
       if (text !== '') {
 
