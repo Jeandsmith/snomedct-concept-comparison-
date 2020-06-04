@@ -5,7 +5,6 @@
 // let thisItemId = { ID: undefined, Term: undefined }; // Just for init
 var newestItemId = 0;
 
-
 function newItemView(term, conceptId, id) {
 
   let item = ` 
@@ -25,10 +24,12 @@ function newItemView(term, conceptId, id) {
 
             </p>
 
-            <div class="row attr-card tooltipped" data-position="top" data-tooltip="Concept Attributes">
+            <div class="row attr-card">
               <div class="col s12 m12">
                 <div class="card blue darken-3">
                   <div class="card-content white-text">
+                    <p class="grey-text light-1">Concept hierarchal Attribute</p>
+                    </br>
                     <span id="rels"> 
                     
                     
@@ -38,7 +39,7 @@ function newItemView(term, conceptId, id) {
               </div>
             </div>
 
-            <a class="waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback">Feedback</a>
+            <a class="modal-trigger waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback" href="#feedback-form">Feedback</a>
 
           </div>
         </div>
@@ -69,7 +70,7 @@ function ajaxConceptSynRequest(conceptId) {
       $.map(termsRes, term => {
 
         if (term.Typeid === '900000000000003001') lo += ` <h6> ${term.Term}</h6> <br> `;
-        else li += `<span class="tiny material-icons">lens</span> ${term.Term} </span> <br>`;
+        else li += `<span><i class="tiny material-icons">lens</i> ${term.Term} </span> <br>`;
 
       });
 
@@ -139,52 +140,54 @@ function loadItemClickEvent() {
 
     else if (!thisItem.data('onScreen') && viewSection.children().length) {
 
-      ajaxConceptSynRequest(conceptId);
-      newestItemId = (newestItemId + 1) % 2;
+      if (thisItem.hasClass('active')) {
 
-      if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+        removeItemView(thisItem, viewSection);
 
-        // Remove here
-        // `span#${pageRef}`
-        let prevItem = $('span#collection-item-section')
-          .children().children(`a#${newestItemId.toString()}`);
+      } else {
 
-        viewSection.children(`div#${newestItemId.toString()}`).remove();
-        prevItem.removeClass("active");
-        prevItem.removeAttr('id');
-        prevItem.data('onScreen', false);
-        prevItem.removeData('viewId');
+        newestItemId = (newestItemId + 1) % 2;
+
+        ajaxConceptSynRequest(conceptId);
+
+        if (viewSection.children(`div#${newestItemId.toString()}`).length) {
+
+          // Remove here
+          // `span#${pageRef}`
+          let prevItem = $('span#collection-item-section')
+            .children().children(`a#${newestItemId.toString()}`);
+
+          viewSection.children(`div#${newestItemId.toString()}`).remove();
+          prevItem.removeClass("active");
+          prevItem.removeAttr('id');
+          prevItem.data('onScreen', false);
+          prevItem.removeData('viewId');
+
+        }
+
+
+
+        let otherCardId = Math.abs(newestItemId - 1);
+        let otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
+
+        $.post('/description/card-concept-comparison', {
+          'concept_1': otherCardConcept, 'concept_2': term
+        }).done(sim => { $('#concept-cosine-sim').text(sim); });
+
+        viewSection.append(newItemView(term, conceptId, newestItemId));
+        thisItem.addClass("active");
+
+        thisItem.attr('id', newestItemId.toString());
+        thisItem.data('onScreen', true);
 
       }
 
-      let otherCardId = Math.abs(newestItemId - 1);
-      let otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
-
-      $.post('/description/card-concept-comparison', {
-        'concept_1': otherCardConcept, 'concept_2': term
-      }).done(sim => { $('#concept-cosine-sim').text(sim); });
-
-      viewSection.append(newItemView(term, conceptId, newestItemId));
-      thisItem.addClass("active");
-
-      thisItem.attr('id', newestItemId.toString());
-      thisItem.data('onScreen', true);
     }
 
     else if (thisItem.data('onScreen')) {
 
-      let itemId = thisItem.attr(`id`);
+      removeItemView(thisItem, viewSection);
 
-      thisItem.removeClass("active");
-      viewSection.children(`div#${itemId.toString()}`).remove();
-
-      if (itemId == newestItemId) {
-        newestItemId = (newestItemId + 1) % 2;
-      }
-
-      thisItem.data('onScreen', false);
-      thisItem.removeAttr('id');
-      $('#concept-cosine-sim').text(0);
     }
 
     addButtonClickEven();
@@ -195,40 +198,58 @@ function loadItemClickEvent() {
 
 }
 
+function removeItemView(item, viewSection) {
+
+  let itemId = item.attr(`id`);
+
+  item.removeClass("active");
+  viewSection.children(`div#${itemId.toString()}`).remove();
+
+  if (itemId == newestItemId) {
+    newestItemId = (newestItemId + 1) % 2;
+  }
+
+  item.data('onScreen', false);
+  item.removeAttr('id');
+  $('#concept-cosine-sim').text(0);
+
+}
+
 function addButtonClickEven() {
 
   $('.card-button').on('click', function () {
 
     let $this = $(this);
-    let concept = $this.parent().children('span').children('#conceptId').text();
+    let concept = $this.parent().children('span').children('.card-concept').text();
+    let conceptId = $this.parent().children('span').children('#conceptId').text();
 
-    console.log(concept);
+    // console.log(concept);
 
     if ($this.data('clicked')) {
 
-      let text = $this.parent()
-        .children('div.feedform')
-        .children('form.feedback')
-        .children('div.row')
-        .children('div.input-field')
-        .children('textarea#textarea1').val();
+      // let text = $this.parent()
+      //   .children('div.feedform')
+      //   .children('form.feedback')
+      //   .children('div.row')
+      //   .children('div.input-field')
+      //   .children('textarea#textarea1').val();
 
-      if (text !== '') {
+      // if (text !== '') {
 
-        $.post('/feedback', {
-          feedback: text,
-          conceptId: concept
-        });
+      //   $.post('/feedback', {
+      //     feedback: text,
+      //     conceptId: concept
+      //   });
 
-      }
+      // }
 
       $this.parent().children('div.feedform').remove();
       $this.removeData('clicked');
-      console.log('Removed form ');
+      $this.removeAttr('href');
 
     } else {
 
-      $.get('/feedback/count', { conceptId: concept }).done(data => {
+      $.get('/feedback/count', { conceptId: conceptId }).done(data => {
 
         let rows = '';
 
@@ -242,25 +263,30 @@ function addButtonClickEven() {
 
         });
 
-        $this.parent().children('div.feedform').children('form.feedback').children('a').children('span').append(`${data.length}`);
+        $this.parent()
+          .children('div.feedform')
+          .children()
+          .children('span.feedbacks')
+          .append(`${data.length}`);
 
+        // $('a.feedback-modal-button').on('click', function () {
+        //   $('#feedback-modal .modal-content table tbody').append(rows);
+        // });
         $('#feedback-modal .modal-content table tbody').append(rows);
 
       });
 
       $this.parent().append(`
       <div class="row feedform">
-          <form class="col s12 feedback">
-              <div class="row">
-                  <div class="input-field col s12">
-                  <textarea id="textarea1" class="materialize-textarea"></textarea>
-                  <label for="textarea1">Write Feedback</label>
-                  </div>
-              </div>
+        <div class="col s2">
+          <a class="modal-trigger btn-floating blue darken-2 pulse feedback-modal-button scale-transition" href="#feedback-modal">
+              <i class="material-icons">chrome_reader_mode</i>
+          </a>
+        </div>
 
-              <a class="modal-trigger" href="#feedback-modal">
-                <span class="new badge blue feedbacks" data-badge-caption="Feedbacks"></span></a>
-          </form>
+        <div class="col s10">
+          <span class="new badge blue feedbacks align-center" data-badge-caption="User Feedback"></span>
+        </div>
       </div>`);
 
       let table = `<table>
@@ -277,12 +303,17 @@ function addButtonClickEven() {
 
       $('#feedback-modal .modal-content').children().remove();
       $('#feedback-modal .modal-content').append(table);
-      $('.modal').modal();
-
+      $('#feedback-form input, textarea').val('');
+      $('#feedback-form input#concept').val(concept.toString().trim());
+      $('#feedback-form input#conceptId').val(conceptId);
+      M.updateTextFields();
+      $this.attr('href', '#feedback-form');
       $this.data('clicked', true);
+      $('.modal').modal();
     }
   });
 
 
   $('.tooltipped').tooltip();
+  $('textarea#textarea').characterCounter();
 }

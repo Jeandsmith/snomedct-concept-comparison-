@@ -2,6 +2,8 @@
 
 * Fine tune the algorithm Comparison
 * Fine tune the full text search dictionary to include heartburn
+* Change feedback field to be a modal
+    --> Add inactive concept and concept Id fields
 
 # Doing
 * Page device resolution fix: App not responsive

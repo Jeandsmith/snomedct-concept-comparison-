@@ -29,6 +29,7 @@
 </head>
 
 <body>
+
     <nav>
         <div class="nav-wrapper theme">
             <form id="search-form" action="#!" onkeydown="if (event.which === 13) event.preventDefault();">
@@ -57,7 +58,7 @@
 
             <!-- Filter section -->
             <div class="col s2">
-                <h5 class="center-align">Semantic Tag</h5>
+                <h5 class="center-align">Filter By Semantic Tag</h5>
                 <div id="filter-form">
                     <!-- Filters are here -->
                 </div>
@@ -67,7 +68,7 @@
             <div class="col s4">
                 <ul class="collection with-header">
                     <li class="collection-header">
-                        <h5>Term</h5>
+                        <h5>Search Result</h5>
                     </li>
 
                     <span id="collection-item-section">
@@ -104,9 +105,9 @@
                     <div class="col s12">
                         <div class="card blue darken-2">
                             <div class="card-content white-text">
-                                <span>Similarity Score: <span id="concept-cosine-sim">
+                                <span>Clicked Terms Similarity: <span id="concept-cosine-sim">
 
-                                </span></span>
+                                    </span></span>
                             </div>
                         </div>
                     </div>
@@ -130,6 +131,67 @@
         </div>
     </div>
 
+    <!-- Modal form -->
+    <div id="feedback-form" class="modal">
+        <div class="modal-content">
+            <h4>Feedback Form</h4>
+
+            <div class="row">
+                <form class="col s12" action="/feedback" method="post" id="feedback_form">
+                    <div class="row">
+
+                        <div class="input-field col s6">
+                            <input disabled type="text" id="concept" class="validate">
+                            <label for="concept">Clicked Concept</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <input disabled type="text" id="conceptId" class="validate">
+                            <label for="conceptId">ConceptId</label>
+                        </div>
+
+                    </div>
+
+                    <!--  -->
+                    <div class="row">
+                        <div class="input-field col s12"">
+                            <input type="text" class="validate" id="user-name">
+                            <label for="user-name">Name</label>
+                        </div>
+
+                        <div class="input-field col s12">
+                            <input type="email" class="validate" id="user-email">
+                            <label for="user-email">Email</label>
+                            <span class="helper-text" data-success="Right Format" data-error="Please Enter Valid Email">Message</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <textarea name="" id="textarea" class="materialize-textarea col s12" data-length="60"></textarea>
+                        <label for="textarea">Textarea</label>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+            <div class="row">
+                <div class="offset-s9 col s2">
+                    <button class="btn modal-close waves-effect waves-light theme" type="submit" name="action" id="feedback_button">
+                        Submit<i class="material-icons right">send</i>
+                    </button>
+                </div>
+
+                <div class="col s1">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat"><i
+                        class="material-icons">close</i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--JavaScript at end of body for optimized loading-->
     <!-- <script src="static/js/materialize.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -138,7 +200,8 @@
     <script src="static/js/pagination.js"></script>
     <script src="static/js/filter.js"></script>
     <script src="static/js/live_search.js"></script>
-    
+    <script src="static/js/feedback_button.js"></script>
+
 </body>
 
 </html>

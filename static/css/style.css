@@ -47,7 +47,7 @@
   color: #ea454b !important;
 }
 
-.materialize-red.darken-1, .materialize-red.theme, .materialize-red.active {
+.materialize-red.darken-1, .materialize-red.theme, a.materialize-red.active, span#page-section li.materialize-red.active {
   background-color: #d0181e !important;
 }
 
@@ -127,7 +127,7 @@
   color: #EF5350 !important;
 }
 
-.red.darken-1, .red.theme, .red.active {
+.red.darken-1, .red.theme, a.red.active, span#page-section li.red.active {
   background-color: #E53935 !important;
 }
 
@@ -239,7 +239,7 @@
   color: #ec407a !important;
 }
 
-.pink.darken-1, .pink.theme, .pink.active {
+.pink.darken-1, .pink.theme, a.pink.active, span#page-section li.pink.active {
   background-color: #d81b60 !important;
 }
 
@@ -351,7 +351,7 @@
   color: #ab47bc !important;
 }
 
-.purple.darken-1, .purple.theme, .purple.active {
+.purple.darken-1, .purple.theme, a.purple.active, span#page-section li.purple.active {
   background-color: #8e24aa !important;
 }
 
@@ -463,7 +463,7 @@
   color: #7e57c2 !important;
 }
 
-.deep-purple.darken-1, .deep-purple.theme, .deep-purple.active {
+.deep-purple.darken-1, .deep-purple.theme, a.deep-purple.active, span#page-section li.deep-purple.active {
   background-color: #5e35b1 !important;
 }
 
@@ -575,7 +575,7 @@
   color: #5c6bc0 !important;
 }
 
-.indigo.darken-1, .indigo.theme, .indigo.active {
+.indigo.darken-1, .indigo.theme, a.indigo.active, span#page-section li.indigo.active {
   background-color: #3949ab !important;
 }
 
@@ -639,7 +639,7 @@
   color: #304ffe !important;
 }
 
-.blue, .theme, .active {
+.blue, .theme, a.active, span#page-section li.active {
   background-color: #2196F3 !important;
 }
 
@@ -647,7 +647,7 @@
   color: #2196F3 !important;
 }
 
-.blue.lighten-5, .lighten-5.theme, .lighten-5.active {
+.blue.lighten-5, .lighten-5.theme, a.lighten-5.active, span#page-section li.lighten-5.active {
   background-color: #E3F2FD !important;
 }
 
@@ -655,7 +655,7 @@
   color: #E3F2FD !important;
 }
 
-.blue.lighten-4, .lighten-4.theme, .lighten-4.active {
+.blue.lighten-4, .lighten-4.theme, a.lighten-4.active, span#page-section li.lighten-4.active {
   background-color: #BBDEFB !important;
 }
 
@@ -663,7 +663,7 @@
   color: #BBDEFB !important;
 }
 
-.blue.lighten-3, .lighten-3.theme, .lighten-3.active {
+.blue.lighten-3, .lighten-3.theme, a.lighten-3.active, span#page-section li.lighten-3.active {
   background-color: #90CAF9 !important;
 }
 
@@ -671,7 +671,7 @@
   color: #90CAF9 !important;
 }
 
-.blue.lighten-2, .lighten-2.theme, .lighten-2.active {
+.blue.lighten-2, .lighten-2.theme, a.lighten-2.active, span#page-section li.lighten-2.active {
   background-color: #64B5F6 !important;
 }
 
@@ -679,7 +679,7 @@
   color: #64B5F6 !important;
 }
 
-.blue.lighten-1, .lighten-1.theme, .lighten-1.active {
+.blue.lighten-1, .lighten-1.theme, a.lighten-1.active, span#page-section li.lighten-1.active {
   background-color: #42A5F5 !important;
 }
 
@@ -687,7 +687,7 @@
   color: #42A5F5 !important;
 }
 
-.blue.darken-1, .theme, .active {
+.blue.darken-1, .theme, a.active, span#page-section li.active {
   background-color: #1E88E5 !important;
 }
 
@@ -695,7 +695,7 @@
   color: #1E88E5 !important;
 }
 
-.blue.darken-2, .darken-2.theme, .darken-2.active {
+.blue.darken-2, .darken-2.theme, a.darken-2.active, span#page-section li.darken-2.active {
   background-color: #1976D2 !important;
 }
 
@@ -703,7 +703,7 @@
   color: #1976D2 !important;
 }
 
-.blue.darken-3, .darken-3.theme, .darken-3.active {
+.blue.darken-3, .darken-3.theme, a.darken-3.active, span#page-section li.darken-3.active {
   background-color: #1565C0 !important;
 }
 
@@ -711,7 +711,7 @@
   color: #1565C0 !important;
 }
 
-.blue.darken-4, .darken-4.theme, .darken-4.active {
+.blue.darken-4, .darken-4.theme, a.darken-4.active, span#page-section li.darken-4.active {
   background-color: #0D47A1 !important;
 }
 
@@ -719,7 +719,7 @@
   color: #0D47A1 !important;
 }
 
-.blue.accent-1, .accent-1.theme, .accent-1.active {
+.blue.accent-1, .accent-1.theme, a.accent-1.active, span#page-section li.accent-1.active {
   background-color: #82B1FF !important;
 }
 
@@ -727,7 +727,7 @@
   color: #82B1FF !important;
 }
 
-.blue.accent-2, .accent-2.theme, .accent-2.active {
+.blue.accent-2, .accent-2.theme, a.accent-2.active, span#page-section li.accent-2.active {
   background-color: #448AFF !important;
 }
 
@@ -735,7 +735,7 @@
   color: #448AFF !important;
 }
 
-.blue.accent-3, .accent-3.theme, .accent-3.active {
+.blue.accent-3, .accent-3.theme, a.accent-3.active, span#page-section li.accent-3.active {
   background-color: #2979FF !important;
 }
 
@@ -743,7 +743,7 @@
   color: #2979FF !important;
 }
 
-.blue.accent-4, .accent-4.theme, .accent-4.active {
+.blue.accent-4, .accent-4.theme, a.accent-4.active, span#page-section li.accent-4.active {
   background-color: #2962FF !important;
 }
 
@@ -799,7 +799,7 @@
   color: #29b6f6 !important;
 }
 
-.light-blue.darken-1, .light-blue.theme, .light-blue.active {
+.light-blue.darken-1, .light-blue.theme, a.light-blue.active, span#page-section li.light-blue.active {
   background-color: #039be5 !important;
 }
 
@@ -911,7 +911,7 @@
   color: #26c6da !important;
 }
 
-.cyan.darken-1, .cyan.theme, .cyan.active {
+.cyan.darken-1, .cyan.theme, a.cyan.active, span#page-section li.cyan.active {
   background-color: #00acc1 !important;
 }
 
@@ -1023,7 +1023,7 @@
   color: #26a69a !important;
 }
 
-.teal.darken-1, .teal.theme, .teal.active {
+.teal.darken-1, .teal.theme, a.teal.active, span#page-section li.teal.active {
   background-color: #00897b !important;
 }
 
@@ -1135,7 +1135,7 @@
   color: #66BB6A !important;
 }
 
-.green.darken-1, .green.theme, .green.active {
+.green.darken-1, .green.theme, a.green.active, span#page-section li.green.active {
   background-color: #43A047 !important;
 }
 
@@ -1247,7 +1247,7 @@
   color: #9ccc65 !important;
 }
 
-.light-green.darken-1, .light-green.theme, .light-green.active {
+.light-green.darken-1, .light-green.theme, a.light-green.active, span#page-section li.light-green.active {
   background-color: #7cb342 !important;
 }
 
@@ -1359,7 +1359,7 @@
   color: #d4e157 !important;
 }
 
-.lime.darken-1, .lime.theme, .lime.active {
+.lime.darken-1, .lime.theme, a.lime.active, span#page-section li.lime.active {
   background-color: #c0ca33 !important;
 }
 
@@ -1471,7 +1471,7 @@
   color: #ffee58 !important;
 }
 
-.yellow.darken-1, .yellow.theme, .yellow.active {
+.yellow.darken-1, .yellow.theme, a.yellow.active, span#page-section li.yellow.active {
   background-color: #fdd835 !important;
 }
 
@@ -1583,7 +1583,7 @@
   color: #ffca28 !important;
 }
 
-.amber.darken-1, .amber.theme, .amber.active {
+.amber.darken-1, .amber.theme, a.amber.active, span#page-section li.amber.active {
   background-color: #ffb300 !important;
 }
 
@@ -1695,7 +1695,7 @@
   color: #ffa726 !important;
 }
 
-.orange.darken-1, .orange.theme, .orange.active {
+.orange.darken-1, .orange.theme, a.orange.active, span#page-section li.orange.active {
   background-color: #fb8c00 !important;
 }
 
@@ -1807,7 +1807,7 @@
   color: #ff7043 !important;
 }
 
-.deep-orange.darken-1, .deep-orange.theme, .deep-orange.active {
+.deep-orange.darken-1, .deep-orange.theme, a.deep-orange.active, span#page-section li.deep-orange.active {
   background-color: #f4511e !important;
 }
 
@@ -1919,7 +1919,7 @@
   color: #8d6e63 !important;
 }
 
-.brown.darken-1, .brown.theme, .brown.active {
+.brown.darken-1, .brown.theme, a.brown.active, span#page-section li.brown.active {
   background-color: #6d4c41 !important;
 }
 
@@ -1999,7 +1999,7 @@
   color: #78909c !important;
 }
 
-.blue-grey.darken-1, .blue-grey.theme, .blue-grey.active {
+.blue-grey.darken-1, .blue-grey.theme, a.blue-grey.active, span#page-section li.blue-grey.active {
   background-color: #546e7a !important;
 }
 
@@ -2079,7 +2079,7 @@
   color: #bdbdbd !important;
 }
 
-.grey.darken-1, .grey.theme, .grey.active {
+.grey.darken-1, .grey.theme, a.grey.active, span#page-section li.grey.active {
   background-color: #757575 !important;
 }
 
@@ -2123,7 +2123,7 @@
   background-color: #FFFFFF !important;
 }
 
-.white-text, .theme, .active, .input-field textarea {
+.white-text, .theme, a.active, span#page-section li.active, .input-field textarea {
   color: #FFFFFF !important;
 }
 
@@ -9034,5 +9034,9 @@ div.attr-card {
 
 span.attr {
   font-size: small;
+}
+
+div.modal-footer {
+  display: inline-block;
 }
 /*# sourceMappingURL=style.css.map */

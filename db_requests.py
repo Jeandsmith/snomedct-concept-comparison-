@@ -1,5 +1,5 @@
 import psycopg2 as pg
-from pandas import DataFrame as df
+import pandas as pd
 import re
 # import time
 
@@ -10,7 +10,7 @@ cursor = connection.cursor()
 # Get filtered terms of a query
 
 
-def filtered_terms(tag, query):
+def filter_terms(tag, query):
     res = get_terms(query, tag)
     # print(res)
     return res
@@ -126,19 +126,29 @@ def get_alt_terms(conceptId):
 
     cursor.execute(query, {'conceptId': conceptId})
     ans = cursor.fetchall()
+    df = pd.DataFrame(ans, columns=["conceptId", "Term", "Typeid"])
+    ans = df.to_dict('records')
     return ans
 
 
 # Post some feedback on the terms
-def postFeedback(feedback, conceptid):
+def postFeedback(data):
+    
+    data_dict = dict(data)
+
     query = """
     
-    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP);
+    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP, %{user_name}s, %{email}s);
     
     """
 
-    cursor.execute(query, {'feedback': feedback, 'conceptId': conceptid})
+    cursor.execute(query, {
+        'feedback': data_dict.feedback, 
+        'conceptId': data_dict.conceptId,
+        'email': data_dict.email,
+        'user_name': data_dict.username})
     connection.commit()
+    # print(dict(data))
 
 # Get the count of user feedback for a concept
 
@@ -163,7 +173,7 @@ def get_concept_rels(conceptId):
 
 
 def clean_text(data):
-    d = df(data, columns=['conceptId', 'typeTerm', 'destTerm'])
+    d = pd.DataFrame(data, columns=['conceptId', 'typeTerm', 'destTerm'])
     res = list()
 
     for row in d.values:
@@ -171,7 +181,7 @@ def clean_text(data):
         desT = re.sub(r'\s\((\w|\W)*\)', '', row[2], flags=re.IGNORECASE)
         res.append([row[0], typeT, desT])
 
-    df_res = df(res, columns=['conceptId', 'typeTerm', 'destTerm'])
+    df_res = pd.DataFrame(res, columns=['conceptId', 'typeTerm', 'destTerm'])
     df_res.drop_duplicates(inplace=True)
     fn = df_res.to_dict('records')
     return fn

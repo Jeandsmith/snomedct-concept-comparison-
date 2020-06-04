@@ -2,7 +2,7 @@
 
 $(() => {
 
-  $("div.input-field input").keyup($.debounce(800, event => {
+  $("div.input-field input#search").keyup($.debounce(800, event => {
 
     // Get the length of the input
     var len = event.currentTarget.value.length;

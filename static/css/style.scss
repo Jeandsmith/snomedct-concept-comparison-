@@ -22,7 +22,11 @@ body {
   @extend .black-text;
 }
 
-.active {
+a.active {
+  @extend .theme;
+}
+
+span#page-section li.active {
   @extend .theme;
 }
 
@@ -40,4 +44,8 @@ div.attr-card {
 
 span.attr {
   font-size: small;
+}
+
+div.modal-footer{
+  display: inline-block;
 }

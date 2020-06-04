@@ -67,7 +67,6 @@ def fasttext_sim(concept_1, concept_2):
     c1 = simple_preprocess(concept_1)
     c2 = simple_preprocess(concept_2)
     sims = ft.n_similarity(c1, c2)
-
     return sims
 
 def compare_concepts(concept_1, concept_2):
