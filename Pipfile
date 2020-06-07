@@ -18,6 +18,8 @@ numpy = "*"
 scipy = "*"
 dateutils = "*"
 urllib3 = "*"
+gunicorn = "*"
+flask-heroku = "*"
 
 [requires]
 python_version = "3.8"
