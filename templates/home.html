@@ -122,9 +122,23 @@
     </div>
 
     <!-- Modal Structure -->
-    <div id="feedback-modal" class="modal">
+    <div id="feedback-modal" class="modal modal-fixed-footer">
         <div class="modal-content">
             <h4>User Feedback</h4>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ConceptId</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-content">
+                    
+                </tbody>
+            </table>
+
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-green btn-flat"><i class="material-icons">close</i></a>
@@ -132,7 +146,7 @@
     </div>
 
     <!-- Modal form -->
-    <div id="feedback-form" class="modal">
+    <div id="feedback-form" class="modal modal-fixed-footer">
         <div class="modal-content">
             <h4>Feedback Form</h4>
 
@@ -154,7 +168,7 @@
 
                     <!--  -->
                     <div class="row">
-                        <div class="input-field col s12"">
+                        <div class="input-field col s12">
                             <input type="text" class="validate" id="user-name">
                             <label for="user-name">Name</label>
                         </div>
@@ -162,12 +176,14 @@
                         <div class="input-field col s12">
                             <input type="email" class="validate" id="user-email">
                             <label for="user-email">Email</label>
-                            <span class="helper-text" data-success="Right Format" data-error="Please Enter Valid Email">Message</span>
+                            <span class="helper-text" data-success="Right Format"
+                                data-error="Please Enter Valid Email">Message</span>
                         </div>
                     </div>
 
                     <div class="row">
-                        <textarea name="" id="textarea" class="materialize-textarea col s12" data-length="60"></textarea>
+                        <textarea name="" id="textarea" class="materialize-textarea col s12"
+                            data-length="60"></textarea>
                         <label for="textarea">Textarea</label>
                     </div>
                 </form>
@@ -179,14 +195,14 @@
         <div class="modal-footer">
             <div class="row">
                 <div class="offset-s9 col s2">
-                    <button class="btn modal-close waves-effect waves-light theme" type="submit" name="action" id="feedback_button">
+                    <button class="btn waves-effect waves-light theme" type="submit" name="action" id="feedback_button">
                         Submit<i class="material-icons right">send</i>
                     </button>
                 </div>
 
                 <div class="col s1">
                     <a href="#!" class="modal-close waves-effect waves-green btn-flat"><i
-                        class="material-icons">close</i></a>
+                            class="material-icons">close</i></a>
                 </div>
             </div>
         </div>

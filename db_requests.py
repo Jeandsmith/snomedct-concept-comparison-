@@ -133,22 +133,20 @@ def get_alt_terms(conceptId):
 
 # Post some feedback on the terms
 def postFeedback(data):
-    
-    data_dict = dict(data)
 
     query = """
     
-    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP, %{user_name}s, %{email}s);
+    INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP, %(user_name)s, %(email)s);
     
     """
 
     cursor.execute(query, {
-        'feedback': data_dict.feedback, 
-        'conceptId': data_dict.conceptId,
-        'email': data_dict.email,
-        'user_name': data_dict.username})
+        'feedback': data['feedback'], 
+        'conceptId': data['conceptId'],
+        'email': data['email'],
+        'user_name': data['username']})
     connection.commit()
-    # print(dict(data))
+    print(dict(data))
 
 # Get the count of user feedback for a concept
 

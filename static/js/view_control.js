@@ -223,56 +223,23 @@ function addButtonClickEven() {
     let concept = $this.parent().children('span').children('.card-concept').text();
     let conceptId = $this.parent().children('span').children('#conceptId').text();
 
-    // console.log(concept);
-
     if ($this.data('clicked')) {
-
-      // let text = $this.parent()
-      //   .children('div.feedform')
-      //   .children('form.feedback')
-      //   .children('div.row')
-      //   .children('div.input-field')
-      //   .children('textarea#textarea1').val();
-
-      // if (text !== '') {
-
-      //   $.post('/feedback', {
-      //     feedback: text,
-      //     conceptId: concept
-      //   });
-
-      // }
 
       $this.parent().children('div.feedform').remove();
       $this.removeData('clicked');
-      $this.removeAttr('href');
+      $this.removeClass('modal-trigger');
 
     } else {
 
-      $.get('/feedback/count', { conceptId: conceptId }).done(data => {
+      $.get('/feedback/count', { 'conceptId': conceptId }).done(data => {
 
-        let rows = '';
-
-        $.map(data, (item, index) => {
-
-          rows += `<tr>
-          <td>${item[0]}</td>
-          <td>${item[1]}</td>
-          <td>${item[2]}</td>
-          </tr>`;
-
-        });
-
-        $this.parent()
+        let dataBadge = $this
+          .parent()
           .children('div.feedform')
-          .children()
-          .children('span.feedbacks')
-          .append(`${data.length}`);
+          .children('div.s10')
+          .children('span.feedbacks');
 
-        // $('a.feedback-modal-button').on('click', function () {
-        //   $('#feedback-modal .modal-content table tbody').append(rows);
-        // });
-        $('#feedback-modal .modal-content table tbody').append(rows);
+        dataBadge.text(`${data.length}`);
 
       });
 
@@ -289,31 +256,59 @@ function addButtonClickEven() {
         </div>
       </div>`);
 
-      let table = `<table>
-      <thead>
-        <tr>
-            <th>ConceptId</th>
-            <th>Message</th>
-            <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody >
-      </table >`;
-
-      $('#feedback-modal .modal-content').children().remove();
-      $('#feedback-modal .modal-content').append(table);
+      feedButtonClickEvent();
+      let modalInsts = $('.modal');
+      M.Modal.init(modalInsts);
       $('#feedback-form input, textarea').val('');
       $('#feedback-form input#concept').val(concept.toString().trim());
       $('#feedback-form input#conceptId').val(conceptId);
       M.updateTextFields();
-      $this.attr('href', '#feedback-form');
+      if (!$this.hasClass('modal-trigger')) $this.addClass('modal-trigger');
       $this.data('clicked', true);
-      $('.modal').modal();
+
     }
   });
 
-
   $('.tooltipped').tooltip();
   $('textarea#textarea').characterCounter();
+
+}
+
+function feedButtonClickEvent() {
+
+  $('a.feedback-modal-button').unbind();
+
+  // Button to get the user feed back
+  $('a.feedback-modal-button').on('click', function () {
+
+    let $this = $(this);
+    let conceptId = $this
+      .parent()
+      .parent()
+      .parent()
+      .children('span')
+      .children('#conceptId')
+      .text();
+
+    $.get('/feedback/count', { conceptId: conceptId }).done(data => {
+
+      let rows = '';
+
+      $.map(data, (item, index) => {
+
+        rows += `<tr>
+      <td>${item[0]}</td>
+      <td>${item[1]}</td>
+      <td>${item[2]}</td>
+      </tr>`;
+
+      });
+
+      let tbody = $('#feedback-modal .modal-content table tbody#tbody-content');
+      tbody.empty();
+      tbody.append(rows);
+
+    });
+
+  });
 }
