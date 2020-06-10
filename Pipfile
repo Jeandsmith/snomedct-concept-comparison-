@@ -8,7 +8,6 @@ pytest = "*"
 pylint = "*"
 
 [packages]
-flask = "*"
 gensim = "*"
 pandas = "*"
 psycopg2 = "*"
@@ -18,8 +17,7 @@ numpy = "*"
 scipy = "*"
 dateutils = "*"
 urllib3 = "*"
-gunicorn = "*"
-flask-heroku = "*"
+flask = "*"
 
 [requires]
 python_version = "3.8"
