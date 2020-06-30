@@ -141,7 +141,7 @@ def postFeedback(data):
     """
 
     cursor.execute(query, {
-        'feedback': data['feedback'], 
+        'feedback': data['feedback'],
         'conceptId': data['conceptId'],
         'email': data['email'],
         'user_name': data['username']})
@@ -171,15 +171,42 @@ def get_concept_rels(conceptId):
 
 
 def clean_text(data):
-    d = pd.DataFrame(data, columns=['conceptId', 'typeTerm', 'destTerm'])
-    res = list()
+    data_table = pd.DataFrame(data, columns=['conceptId', 'typeTerm', 'destTerm'])
+    data_table_processed = list()
 
-    for row in d.values:
+    for row in data_table.values:
         typeT = re.sub(r'\s\((\w|\W)*\)', '', row[1], flags=re.IGNORECASE)
         desT = re.sub(r'\s\((\w|\W)*\)', '', row[2], flags=re.IGNORECASE)
-        res.append([row[0], typeT, desT])
+        data_table_processed.append([row[0], typeT, desT])
 
-    df_res = pd.DataFrame(res, columns=['conceptId', 'typeTerm', 'destTerm'])
+    df_res = pd.DataFrame(data_table_processed, columns=[
+                          'conceptId', 'typeTerm', 'destTerm'])
     df_res.drop_duplicates(inplace=True)
     fn = df_res.to_dict('records')
     return fn
+
+# Make request for the parents of the clicked concept
+def get_parent(conceptId):
+
+    cursor.execute('''
+        select sourceterm
+        from sct_concept_parents_childs
+        where destinationId = %(conceptId)s;
+    ''', {'conceptId': conceptId})
+
+    parents = cursor.fetchall()
+
+    return pd.DataFrame(parents, columns=['ParentConcepts']).to_dict('records')
+
+
+# def get_children(conceptId):
+#     cursor.execute('''
+#         select destTerm
+#         from sct_concept_parents_childs
+#         where sourceid = %(conceptId)s;
+#     ''', {'conceptId': '22298006'})
+
+#     gathered_children = cursor.fetchall()
+#     children_table = pd.DataFrame(gathered_children, columns=['childConcept'])
+#     children_records = children_table.to_dict('records')
+#     return children_records

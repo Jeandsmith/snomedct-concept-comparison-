@@ -9,49 +9,79 @@ function newItemView(term, conceptId, id) {
 
   let item = ` 
       <div class="col s6" id="${id.toString()}">
-        <div class="card hoverable theme">
-          <div class="card-content">
-            <span class="card-title"> 
-              <span id="conceptId">${conceptId}</span> | 
-              <span class="card-concept">${term}</span>
-            </span>
-            <br>
+        <div class="row">
+          <div class="col s12">
 
-            <p class="flex card-syn">
-              
-              <span class="fns"></span>
-              <span class="syn"></span>
+            <ul class="tabs">
 
-            </p>
+              <li class="tab col s4"><a href="#${id.toString()}_summary" class="active">Summary</a></li>
+              <li class="tab col s4"><a href="#${id.toString()}_parent_child">Parent/Child</a></li>
 
-            <div class="row attr-card">
-              <div class="col s12 m12">
-                <div class="card blue darken-3">
-                  <div class="card-content white-text">
-                    <p class="grey-text light-1">Concept hierarchal Attribute</p>
-                    </br>
-                    <span id="rels"> 
-                    
-                    
-                    </span>
+            </ul>
+
+          </div>
+
+          <div id="${id.toString()}_summary" class="col s12">
+            
+            <div class="card hoverable theme">
+              <div class="card-content">
+                <span class="card-title"> 
+                  <span id="conceptId">${conceptId}</span> | 
+                  <span class="card-concept">${term}</span>
+                </span>
+                <br>
+
+                <p class="flex card-syn">
+                  
+                  <span class="fns"></span>
+                  <span class="syn"></span>
+
+                </p>
+
+                <div class="row attr-card">
+                  <div class="col s12 m12">
+                    <div class="card blue darken-3">
+                      <div class="card-content white-text">
+                        <p class="grey-text light-1">Concept hierarchal Attribute</p>
+                        </br>
+                        <span id="rels"> 
+                        
+                        
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <a class="modal-trigger waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback" href="#feedback-form">Feedback</a>
+
               </div>
             </div>
+          </div>
 
-            <a class="modal-trigger waves-effect waves-white white-text btn-flat card-button tooltipped" data-position="right" data-tooltip="See something wrong with the concept? Send feedback" href="#feedback-form">Feedback</a>
-
+          <div id="${id.toString()}_parent_child" class="col s12">
+            <div class="card hoverable theme">
+              <div class="card-content">
+                
+              </div>
+            </div>
           </div>
         </div>
       </div>`;
 
   $('.card-button').unbind();
 
+  // Initialized tabs
+  $(() => {
+    $('.tabs').tabs();
+  });
+
   return item;
 
 }
 
 function ajaxConceptSynRequest(conceptId) {
+
   $.ajax({
     url: '/descriptions',
     method: 'get',
@@ -94,7 +124,7 @@ function ajaxConceptSynRequest(conceptId) {
 
       }
 
-      let currentCardSyn = $(`div#view div#${newestItemId} p.card-syn`);
+      let currentCardSyn = $(`div#view div#${newestItemId} div#${newestItemId}_summary p.card-syn`);
 
       currentCardSyn
         .children('.fns')
@@ -103,7 +133,7 @@ function ajaxConceptSynRequest(conceptId) {
         .children('.syn')
         .append(`${li}`);
 
-      let currentCardRels = $(`div#view div#${newestItemId} div.attr-card`);
+      let currentCardRels = $(`div#view div#${newestItemId} div#${newestItemId}_summary div.attr-card`);
       currentCardRels
         .children()
         .children()
@@ -112,6 +142,23 @@ function ajaxConceptSynRequest(conceptId) {
 
     }
   });
+
+  $.get('/children-concepts', {conceptId: conceptId})
+  .done(concepts => {
+    console.log(concepts);
+  });
+
+}
+
+// Get the parent concepts of the clicked concepts
+function getConceptParents(conceptId){
+
+  $.get('/descriptions/parent-rels', {'conceptId': conceptId}).done(function (parents) {
+
+    // Get ref to card with this concept
+
+  });
+
 }
 
 function loadItemClickEvent() {
@@ -121,7 +168,6 @@ function loadItemClickEvent() {
     let thisItem = $(this);
     let term;
     let viewSection = $("div#view");
-    let pageRef = thisItem.parent().attr('id');
 
     term = thisItem.children().children("span.term").text();
     conceptId = thisItem.children().children("span.term").attr('data-conceptid');
@@ -129,6 +175,7 @@ function loadItemClickEvent() {
     if (!viewSection.children().length) {
 
       ajaxConceptSynRequest(conceptId);
+      getConceptParents(conceptId);
       newestItemId = 0;
       viewSection.append(newItemView(term, conceptId, newestItemId));
       thisItem.attr('id', newestItemId.toString());
@@ -149,6 +196,7 @@ function loadItemClickEvent() {
         newestItemId = (newestItemId + 1) % 2;
 
         ajaxConceptSynRequest(conceptId);
+        getConceptParents(conceptId);
 
         if (viewSection.children(`div#${newestItemId.toString()}`).length) {
 

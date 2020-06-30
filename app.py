@@ -5,11 +5,15 @@ import gens
 app = Flask(__name__)
 
 # Handle home page
+
+
 @app.route("/")
 def home():
     return render_template("home.html")
 
 # Handles user requests
+
+
 @app.route("/term-search", methods=["GET", "POST"])
 def term_search():
     if request.method == 'GET':
@@ -21,7 +25,8 @@ def term_search():
 
 @app.route("/filter")
 def filter():
-    res = dbcon.filter_terms(request.args.get("tag"), request.args.get("query"))
+    res = dbcon.filter_terms(request.args.get("tag"),
+                             request.args.get("query"))
     sim_res = gens.gen_query_term_sim(res, request.args.get("query"))
     return jsonify(sim_res)
 
@@ -49,10 +54,28 @@ def feedback_count():
     return jsonify(feedback_count)
 
 
-@app.route('/description/card-concept-comparison', methods=['POST', 'GET'])
+@app.route('/descriptions/card-concept-comparison', methods=['POST', 'GET'])
 def card_concept_comparison():
     if request.method == "POST":
         c1 = request.form.get('concept_1')
         c2 = request.form.get('concept_2')
         sim = gens.compare_concepts(c1, c2)
         return str(sim)
+
+
+# @app.route('/children-concepts')
+# def children_concepts():
+#     conceptId = request.args.get('conceptId')
+#     children_records = dbcon.get_children(conceptId)
+#     print(children_records)
+#     print(conceptId)
+#     return jsonify(children_records)
+
+# Route to the the parent concepts of the clicked concept
+@app.route('/descriptions/parent-rels')
+def children_rels():
+
+    conceptId = request.args['conceptId']
+    parents = dbcon.get_parent(conceptId)
+
+    return jsonify(parents)
