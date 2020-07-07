@@ -63,18 +63,17 @@ def card_concept_comparison():
         return str(sim)
 
 
-# @app.route('/children-concepts')
-# def children_concepts():
-#     conceptId = request.args.get('conceptId')
-#     children_records = dbcon.get_children(conceptId)
-#     print(children_records)
-#     print(conceptId)
-#     return jsonify(children_records)
+@app.route('/children-rels', methods=['GET', 'POST'])
+def children_concepts():
+    concept_id = request.args['conceptId']
+
+    print(concept_id)
+    children = dbcon.get_children(concept_id)
+    return jsonify(children)
 
 # Route to the the parent concepts of the clicked concept
 @app.route('/descriptions/parent-rels')
-def children_rels():
-
+def parents_rels():
     conceptId = request.args['conceptId']
     parents = dbcon.get_parent(conceptId)
 

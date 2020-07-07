@@ -114,14 +114,14 @@ def get_alt_terms(conceptId):
 
     query = '''
         SELECT DISTINCT c.id, d.term, d.typeid
-            FROM 
-                sct2_concept AS c, 
-                sct2_description AS d
-            WHERE 
-                c.id = d.conceptId AND
-                c.active = '1' AND 
-                d.active = '1' AND
-                d.conceptId = %(conceptId)s;
+        FROM 
+            sct2_concept AS c, 
+            sct2_description AS d
+        WHERE 
+            c.id = d.conceptId AND
+            c.active = '1' AND 
+            d.active = '1' AND
+            d.conceptId = %(conceptId)s;
     '''
 
     cursor.execute(query, {'conceptId': conceptId})
@@ -166,11 +166,8 @@ def get_concept_rels(conceptId):
 	    WHERE conceptId = %(conceptId)s;'''
     cursor.execute(query, {'conceptId': conceptId})
     data = cursor.fetchall()
-    c_data = clean_text(data)
-    return c_data
 
-
-def clean_text(data):
+    # Clean the data a bit
     data_table = pd.DataFrame(data, columns=['conceptId', 'typeTerm', 'destTerm'])
     data_table_processed = list()
 
@@ -179,34 +176,34 @@ def clean_text(data):
         desT = re.sub(r'\s\((\w|\W)*\)', '', row[2], flags=re.IGNORECASE)
         data_table_processed.append([row[0], typeT, desT])
 
-    df_res = pd.DataFrame(data_table_processed, columns=[
-                          'conceptId', 'typeTerm', 'destTerm'])
+    df_res = pd.DataFrame(data_table_processed, columns=['conceptId', 'typeTerm', 'destTerm'])
     df_res.drop_duplicates(inplace=True)
     fn = df_res.to_dict('records')
+
     return fn
 
-# Make request for the parents of the clicked concept
 def get_parent(conceptId):
 
     cursor.execute('''
-        select sourceterm
+        select destterm
         from sct_concept_parents_childs
-        where destinationId = %(conceptId)s;
+        where sourceid = %(conceptId)s;
     ''', {'conceptId': conceptId})
 
     parents = cursor.fetchall()
 
-    return pd.DataFrame(parents, columns=['ParentConcepts']).to_dict('records')
+    return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
 
 
-# def get_children(conceptId):
-#     cursor.execute('''
-#         select destTerm
-#         from sct_concept_parents_childs
-#         where sourceid = %(conceptId)s;
-#     ''', {'conceptId': '22298006'})
+def get_children(conceptId):
+    cursor.execute('''
+        select sourceterm
+        from sct_concept_parents_childs
+        where destinationid = %(conceptId)s;
+    ''', {'conceptId': conceptId})
 
-#     gathered_children = cursor.fetchall()
-#     children_table = pd.DataFrame(gathered_children, columns=['childConcept'])
-#     children_records = children_table.to_dict('records')
-#     return children_records
+    data = cursor.fetchall()
+
+    print (data)
+
+    return pd.DataFrame(data, columns=['Concept']).to_dict('records')

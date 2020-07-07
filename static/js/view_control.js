@@ -15,7 +15,8 @@ function newItemView(term, conceptId, id) {
             <ul class="tabs">
 
               <li class="tab col s4"><a href="#${id.toString()}_summary" class="active">Summary</a></li>
-              <li class="tab col s4"><a href="#${id.toString()}_parent_child">Parent/Child</a></li>
+              <li class="tab col s4"><a href="#${id.toString()}_parent">Parents</a></li>
+              <li class="tab col s4"><a href="#${id.toString()}_child">Childrens</a></li>
 
             </ul>
 
@@ -59,7 +60,16 @@ function newItemView(term, conceptId, id) {
             </div>
           </div>
 
-          <div id="${id.toString()}_parent_child" class="col s12">
+          <div id="${id.toString()}_parent" class="col s12">
+            <div class="card hoverable theme">
+              <div class="card-content">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="${id.toString()}_child" class="col s12">
             <div class="card hoverable theme">
               <div class="card-content">
                 
@@ -140,25 +150,60 @@ function ajaxConceptSynRequest(conceptId) {
         .children()
         .append(`${r}`);
 
-    }
-  });
+      // get the parents
 
-  $.get('/children-concepts', {conceptId: conceptId})
-  .done(concepts => {
-    console.log(concepts);
+      getConceptParents(conceptId); 
+
+    }
   });
 
 }
 
 // Get the parent concepts of the clicked concepts
-function getConceptParents(conceptId){
+function getConceptParents(conceptId) {
 
-  $.get('/descriptions/parent-rels', {'conceptId': conceptId}).done(function (parents) {
+  $.get('/descriptions/parent-rels', { 'conceptId': conceptId }).done(function (parents) {
 
     // Get ref to card with this concept
+    var cardView = $(`#${newestItemId}_parent`)
+      .children();
 
+    var cardContent = cardView.children("div div.card-content");
+    var lis = "";
+
+    if (parents.length) {
+      $.map(parents, parent => {
+        lis += `<span><i class="tiny material-icons">lens</i> ${parent.Concept} </span> <br>`;
+      });
+    }else lis = "No parents.";
+
+    cardContent.append(lis.toString());
+    getChildrenConcepts(conceptId);
   });
 
+}
+
+//! TODO: The request is not returning anything or sending anything
+function getChildrenConcepts(conceptId) {
+  $.get('/children-rels', { 'conceptId': conceptId })
+    .done(function(children) {
+      // Get ref to card with this concept
+      var cardView = $(`#${newestItemId}_child`)
+        .children();
+
+      var cardContent = cardView.children("div div.card-content");
+      var lis = "";
+
+      if (children.length) {
+        $.map(children, child => {
+          lis += `<span><i class="tiny material-icons">lens</i> ${child.Concept} </span> <br>`;
+        });
+      }else lis = "No children.";
+
+      console.log(children);
+
+      cardContent.append(lis.toString());
+    });
 }
 
 function loadItemClickEvent() {
@@ -175,7 +220,6 @@ function loadItemClickEvent() {
     if (!viewSection.children().length) {
 
       ajaxConceptSynRequest(conceptId);
-      getConceptParents(conceptId);
       newestItemId = 0;
       viewSection.append(newItemView(term, conceptId, newestItemId));
       thisItem.attr('id', newestItemId.toString());
@@ -196,7 +240,6 @@ function loadItemClickEvent() {
         newestItemId = (newestItemId + 1) % 2;
 
         ajaxConceptSynRequest(conceptId);
-        getConceptParents(conceptId);
 
         if (viewSection.children(`div#${newestItemId.toString()}`).length) {
 
@@ -212,8 +255,6 @@ function loadItemClickEvent() {
           prevItem.removeData('viewId');
 
         }
-
-
 
         let otherCardId = Math.abs(newestItemId - 1);
         let otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
