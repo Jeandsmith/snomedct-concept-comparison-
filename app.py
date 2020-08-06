@@ -60,14 +60,14 @@ def card_concept_comparison():
         c1 = request.form.get('concept_1')
         c2 = request.form.get('concept_2')
         sim = gens.compare_concepts(c1, c2)
+        print(sim)
         return str(sim)
-
 
 @app.route('/children-rels', methods=['GET', 'POST'])
 def children_concepts():
     concept_id = request.args['conceptId']
 
-    print(concept_id)
+    # print(concept_id)
     children = dbcon.get_children(concept_id)
     return jsonify(children)
 

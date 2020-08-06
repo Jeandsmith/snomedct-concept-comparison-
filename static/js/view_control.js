@@ -259,7 +259,10 @@ function loadItemClickEvent() {
         let otherCardId = Math.abs(newestItemId - 1);
         let otherCardConcept = $(`div#view div#${otherCardId} .card .card-content .card-title .card-concept`).text();
 
-        $.post('/description/card-concept-comparison', {
+        console.log(`Term1: ${otherCardConcept}`);
+        console.log(`Term2: ${term}`);
+
+        $.post('/descriptions/card-concept-comparison', {
           'concept_1': otherCardConcept, 'concept_2': term
         }).done(sim => { $('#concept-cosine-sim').text(sim); });
 

@@ -3,7 +3,7 @@ import pandas as pd
 import re
 # import time
 
-connection = pg.connect("dbname=snomed user=postgres password=root")
+connection = pg.connect("dbname=SNOMEDCT user=postgres password=postgres")
 connection.autocommit = False
 cursor = connection.cursor()
 
@@ -20,6 +20,8 @@ def ts_query(query):
     """
         Preprocess the query
     """
+
+    query = query.strip()
 
     # Place an & token for indexing queries
     if ' ' in query and not query.endswith(' '):
@@ -54,7 +56,7 @@ def get_terms(q, *argv):
                 sct2_concept AS c,
                 sct2_description AS d,
                 sct2_relationship as r,
-                sct2_sem_tag AS st,
+                sct2_tags AS st,
                 to_tsquery(%(search)s) AS q
             WHERE
                 st.id = d.id AND
@@ -65,12 +67,13 @@ def get_terms(q, *argv):
                 r.active = '1' AND
                 concept @@ q;
         '''
+        cursor.execute(query, {'search': t})
 
-        try:
-            cursor.execute(query, {'search': t})
-        except:
-            connection.rollback()
-            return []
+        # try:
+        #     cursor.execute(query, {'search': t})
+        # except:
+        #     connection.rollback()
+        #     return []
     else:
 
         # Clean white space at both ends of the string
@@ -85,7 +88,7 @@ def get_terms(q, *argv):
                 sct2_concept AS c, 
                 sct2_description AS d,
                 sct2_relationship AS r,
-                sct2_sem_tag AS st, 
+                sct2_tags AS st, 
                 to_tsquery(%(search)s) AS q
             WHERE 
                 st.id = d.id                AND
@@ -146,7 +149,7 @@ def postFeedback(data):
         'email': data['email'],
         'user_name': data['username']})
     connection.commit()
-    print(dict(data))
+    # print(dict(data))
 
 # Get the count of user feedback for a concept
 
