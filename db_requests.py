@@ -11,15 +11,13 @@ cursor = connection.cursor()
 
 
 def filter_terms(tag, query):
+
     res = get_terms(query, tag)
-    # print(res)
+
     return res
 
 
 def ts_query(query):
-    """
-        Preprocess the query
-    """
 
     query = query.strip()
 
@@ -47,7 +45,7 @@ def get_terms(q, *argv):
 
     t = ts_query(q)
 
-    #   Postgresql handles indexing and queries
+    # Postgresql handles indexing and queries
     # conceptId
     if not tt:
         query = '''
@@ -67,13 +65,13 @@ def get_terms(q, *argv):
                 r.active = '1' AND
                 concept @@ q;
         '''
-        cursor.execute(query, {'search': t})
 
-        # try:
-        #     cursor.execute(query, {'search': t})
-        # except:
-        #     connection.rollback()
-        #     return []
+        try:
+            cursor.execute(query, {'search': t})
+        except:
+            connection.rollback()
+            return []
+
     else:
 
         # Clean white space at both ends of the string
@@ -193,6 +191,13 @@ def get_parent(conceptId):
         where sourceid = %(conceptId)s;
     ''', {'conceptId': conceptId})
 
+    # try:
+    #     parents = cursor.fetchall()
+
+    #     return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
+    # except pg.Error as e:
+    #     if e.diag.
+
     parents = cursor.fetchall()
 
     return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
@@ -207,6 +212,7 @@ def get_children(conceptId):
 
     data = cursor.fetchall()
 
-    print (data)
+    # print (data)
+    df = pd.DataFrame(data, columns=['Concept']).to_dict('records')
 
-    return pd.DataFrame(data, columns=['Concept']).to_dict('records')
+    return df

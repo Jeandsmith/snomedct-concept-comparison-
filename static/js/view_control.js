@@ -152,17 +152,22 @@ function ajaxConceptSynRequest(conceptId) {
 
       // get the parents
 
-      getConceptParents(conceptId); 
+      setInterval(getConceptParents(conceptId), 500);
 
     }
   });
 
 }
 
+let childXrh;
+let parXrh;
+
 // Get the parent concepts of the clicked concepts
 function getConceptParents(conceptId) {
 
-  $.get('/descriptions/parent-rels', { 'conceptId': conceptId }).done(function (parents) {
+  if (parXrh && parXrh.readyState != 4) parXrh.abort();
+
+  parXrh = $.get('/descriptions/parent-rels', { 'conceptId': conceptId }).done(function (parents) {
 
     // Get ref to card with this concept
     var cardView = $(`#${newestItemId}_parent`)
@@ -175,18 +180,21 @@ function getConceptParents(conceptId) {
       $.map(parents, parent => {
         lis += `<span><i class="tiny material-icons">lens</i> ${parent.Concept} </span> <br>`;
       });
-    }else lis = "No parents.";
+    } else lis = "No parents.";
 
     cardContent.append(lis.toString());
-    getChildrenConcepts(conceptId);
+    setInterval(getChildrenConcepts(conceptId), 500);
   });
 
 }
 
 //! TODO: The request is not returning anything or sending anything
 function getChildrenConcepts(conceptId) {
-  $.get('/children-rels', { 'conceptId': conceptId })
-    .done(function(children) {
+
+  if (childXrh && childXrh.readyState != 4) childXrh.abort();
+
+  childXrh = $.get('/children-rels', { 'conceptId': conceptId })
+    .done(function (children) {
       // Get ref to card with this concept
       var cardView = $(`#${newestItemId}_child`)
         .children();
@@ -198,7 +206,7 @@ function getChildrenConcepts(conceptId) {
         $.map(children, child => {
           lis += `<span><i class="tiny material-icons">lens</i> ${child.Concept} </span> <br>`;
         });
-      }else lis = "No children.";
+      } else lis = "No children.";
 
       console.log(children);
 
