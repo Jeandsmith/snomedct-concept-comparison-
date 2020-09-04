@@ -153,7 +153,7 @@ function ajaxConceptSynRequest(conceptId) {
       // get the parents
 
       setInterval(getConceptParents(conceptId), 500);
-
+      setInterval(getChildrenConcepts(conceptId), 500);
     }
   });
 
@@ -183,7 +183,6 @@ function getConceptParents(conceptId) {
     } else lis = "No parents.";
 
     cardContent.append(lis.toString());
-    setInterval(getChildrenConcepts(conceptId), 500);
   });
 
 }

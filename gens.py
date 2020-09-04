@@ -2,6 +2,7 @@ from gensim.utils import simple_preprocess
 from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel, FastText
+from openpyxl import Workbook
 import pandas as pd
 # import numpy as np
 # import logging
@@ -14,11 +15,9 @@ dictionary = Dictionary.load(f'{res_path}dictionary.dict')
 tfidf = TfidfModel.load('resources/tfidf/tfid.mm')
 ft = FastText.load('resources/ft_model.mm')
 
-
 def gen_query_term_sim(comparison_terms, term):
     df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Tag"])
     return tfidf_sim(concept_1=term, df=df)
-
 
 def tfidf_sim(concept_1, df):
 
@@ -51,6 +50,11 @@ def tfidf_sim(concept_1, df):
         # Insert back to the DF the sim column
         (h, w) = df.shape
         df.insert(loc=w, value=sims, column="Similarities")
+     
+        # wb = Workbook()
+        # ws = wb.active()
+        # ws.append(df)
+        # wb.save('data.xlsx')
 
         # Sort the values by similarity to concept_1 descending
         # df.sort_values(by=['Term', "Similarities"], ascending=False, inplace=True)

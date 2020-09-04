@@ -82,20 +82,20 @@ def get_terms(q, *argv):
 
         query = '''
             SELECT DISTINCT d.conceptId, d.term, tag
-            FROM 
-                sct2_concept AS c, 
+            FROM
+                sct2_concept AS c,
                 sct2_description AS d,
                 sct2_relationship AS r,
-                sct2_tags AS st, 
+                sct2_tags AS st,
                 to_tsquery(%(search)s) AS q
-            WHERE 
+            WHERE
                 st.id = d.id                AND
                 c.id = d.conceptId          AND
-                d.concept @@ q              AND 
+                d.concept @@ q              AND
                 c.active = '1'              AND
                 d.active = '1'              AND
                 r.active = '1'              AND
-                r.sourceId = d.conceptId    AND 
+                r.sourceId = d.conceptId    AND
                 st.tag_idx @@ to_tsquery(%(tag)s);
             '''
 
@@ -115,12 +115,12 @@ def get_alt_terms(conceptId):
 
     query = '''
         SELECT DISTINCT c.id, d.term, d.typeid
-        FROM 
-            sct2_concept AS c, 
+        FROM
+            sct2_concept AS c,
             sct2_description AS d
-        WHERE 
+        WHERE
             c.id = d.conceptId AND
-            c.active = '1' AND 
+            c.active = '1' AND
             d.active = '1' AND
             d.conceptId = %(conceptId)s;
     '''
@@ -136,9 +136,9 @@ def get_alt_terms(conceptId):
 def postFeedback(data):
 
     query = """
-    
+
     INSERT INTO user_feedback VALUES (%(conceptId)s, %(feedback)s, CURRENT_TIMESTAMP, %(user_name)s, %(email)s);
-    
+
     """
 
     cursor.execute(query, {
@@ -169,7 +169,8 @@ def get_concept_rels(conceptId):
     data = cursor.fetchall()
 
     # Clean the data a bit
-    data_table = pd.DataFrame(data, columns=['conceptId', 'typeTerm', 'destTerm'])
+    data_table = pd.DataFrame(
+        data, columns=['conceptId', 'typeTerm', 'destTerm'])
     data_table_processed = list()
 
     for row in data_table.values:
@@ -177,42 +178,47 @@ def get_concept_rels(conceptId):
         desT = re.sub(r'\s\((\w|\W)*\)', '', row[2], flags=re.IGNORECASE)
         data_table_processed.append([row[0], typeT, desT])
 
-    df_res = pd.DataFrame(data_table_processed, columns=['conceptId', 'typeTerm', 'destTerm'])
+    df_res = pd.DataFrame(data_table_processed, columns=[
+                          'conceptId', 'typeTerm', 'destTerm'])
     df_res.drop_duplicates(inplace=True)
     fn = df_res.to_dict('records')
 
     return fn
 
+
 def get_parent(conceptId):
 
-    cursor.execute('''
-        select destterm
-        from sct_concept_parents_childs
-        where sourceid = %(conceptId)s;
-    ''', {'conceptId': conceptId})
+    connection.rollback()
+    try:
+        cursor.execute('''
+            select destterm
+            from sct_concept_parents_childs
+            where sourceid = %(conceptId)s;
+        ''', {'conceptId': conceptId})
+        parents = cursor.fetchall()
+        df = pd.DataFrame(parents, columns=['Concept'])
 
-    # try:
-    #     parents = cursor.fetchall()
+        return pd.DataFrame(df.iloc[:, 0].str[:1], columns=['Concept']).to_dict('records')
+    except pg.Error as e:
+        print(e.diag.message_primary)
+        return []
 
-    #     return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
-    # except pg.Error as e:
-    #     if e.diag.
-
-    parents = cursor.fetchall()
-
-    return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
+    # return pd.DataFrame(parents, columns=['Concept']).to_dict('records')
 
 
 def get_children(conceptId):
-    cursor.execute('''
-        select sourceterm
-        from sct_concept_parents_childs
-        where destinationid = %(conceptId)s;
-    ''', {'conceptId': conceptId})
+    connection.rollback()
+    try:
 
-    data = cursor.fetchall()
+        cursor.execute('''
+            select sourceterm
+            from sct_concept_parents_childs
+            where destinationid = %(conceptId)s;
+        ''', {'conceptId': conceptId})
+        data = cursor.fetchall()
+        df = pd.DataFrame(data, columns=['Concept'])
 
-    # print (data)
-    df = pd.DataFrame(data, columns=['Concept']).to_dict('records')
-
-    return df
+        return pd.DataFrame(df.iloc[:, 0].str[:1], columns=['Concept']).to_dict('records')
+    except pg.Error as e:
+        print(e.diag)
+        return []

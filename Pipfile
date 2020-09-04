@@ -18,6 +18,7 @@ scipy = "*"
 dateutils = "*"
 urllib3 = "*"
 flask = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.8"

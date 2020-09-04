@@ -1,9 +1,8 @@
 # TODO
 
+* Write algorithm test
 * Fine tune the algorithm Comparison
 * Fine tune the full text search dictionary to include heartburn
-* Change feedback field to be a modal
-    --> Add inactive concept and concept Id fields
 
 # Doing
 * Page device resolution fix: App not responsive
@@ -25,3 +24,5 @@
 * The form persists when the concept is changed while the form is active.
     Has to be deleted when the concept changes.
     Only happen when the concept ID is the same for both cards
+* Change feedback field to be a modal
+    --> Add inactive concept and concept Id fields
