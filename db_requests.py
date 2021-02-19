@@ -3,7 +3,7 @@ import pandas as pd
 import re
 # import time
 
-connection = pg.connect("dbname=SNOMEDCT user=postgres password=postgres")
+connection = pg.connect("dbname=SNOMEDCT user=postgres password=root")
 connection.autocommit = False
 cursor = connection.cursor()
 
@@ -57,7 +57,7 @@ def get_terms(q, *argv):
                 sct2_tags AS st,
                 to_tsquery(%(search)s) AS q
             WHERE
-                st.id = d.id AND
+                st.conceptid = d.id AND
                 c.id = d.conceptId AND
                 d.conceptId = r.sourceId AND
                 c.active = '1' AND
@@ -217,8 +217,10 @@ def get_children(conceptId):
         ''', {'conceptId': conceptId})
         data = cursor.fetchall()
         df = pd.DataFrame(data, columns=['Concept'])
+        p = pd.DataFrame(df.iloc[:, 0].str[:], columns=['Concept']).to_dict('records')
+        # print(p)
 
-        return pd.DataFrame(df.iloc[:, 0].str[:1], columns=['Concept']).to_dict('records')
+        return p
     except pg.Error as e:
         print(e.diag)
         return []

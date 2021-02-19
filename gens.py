@@ -2,7 +2,7 @@ from gensim.utils import simple_preprocess
 from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel, FastText
-from openpyxl import Workbook
+# from openpyxl import Workbook
 import pandas as pd
 # import numpy as np
 # import logging
@@ -11,9 +11,9 @@ import pandas as pd
 #     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 res_path = 'resources/'
-dictionary = Dictionary.load(f'{res_path}dictionary.dict')
-tfidf = TfidfModel.load('resources/tfidf/tfid.mm')
-ft = FastText.load('resources/ft_model.mm')
+dictionary = Dictionary.load(f'{res_path}dictionary.mm')
+tfidf = TfidfModel.load('resources/tfidf-model.mm')
+ft = FastText.load('resources/fasttest-model.mm')
 
 def gen_query_term_sim(comparison_terms, term):
     df = pd.DataFrame(comparison_terms, columns=["conceptId", "Term", "Tag"])
